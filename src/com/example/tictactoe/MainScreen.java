@@ -1,8 +1,8 @@
 package com.example.tictactoe;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,4 +29,9 @@ public class MainScreen extends Activity {
 		return true;
 	}
 
+	public void toTestGame(View view)
+	{
+		Intent intent = new Intent(this, TestGame.class);
+		startActivity(intent);
+	}
 }

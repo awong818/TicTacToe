@@ -8,5 +8,7 @@
     <string name="TwoPlayer">Two Player Mode</string>
     <string name="GameTitle">3x3 Tic Tac Toe</string>
     <string name="Nothing"></string>
+    <string name="testButton">Test Mode</string>
+    <string name="confirmMove">Confirm</string>
 
 </resources>

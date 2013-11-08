@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="TicTacToeBoard">
+        <attr name="test" format="boolean">
+        </attr>
+    </declare-styleable>
+</resources>
