@@ -22,8 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="com.example.tictactoe.TestGame">
+        </activity>
+        
+        <activity
+			android:name="com.example.tictactoe.OnePlayerGame">
+        </activity>
+      
+          <activity
+            android:name="com.example.tictactoe.TwoPlayerGame">
         </activity>
     </application>
 

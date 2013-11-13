@@ -10,5 +10,7 @@
     <string name="Nothing"></string>
     <string name="testButton">Test Mode</string>
     <string name="confirmMove">Confirm</string>
+    <string name="XSign">X</string>
+    <string name="OSign">O</string>
 
 </resources>

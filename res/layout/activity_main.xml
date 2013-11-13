@@ -9,21 +9,13 @@
     tools:context=".MainActivity" >
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/TwoPlayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/TwoPlayer" />
-
-    <Button
-        android:id="@+id/OnePlayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button2"
-        android:layout_alignRight="@+id/button2"
-        android:layout_marginBottom="28dp"
-        android:text="@string/OnePlayer" />
+        android:text="@string/TwoPlayer"
+        android:onClick= "toTwoPlayer" />
     
     <Button
         android:id="@+id/testButton"
@@ -41,5 +33,15 @@
         android:layout_marginTop="46dp"
         android:text="@string/GameTitle"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/OnePlayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TwoPlayer"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_marginBottom="33dp"
+        android:onClick="toOnePlayer"
+        android:text="@string/OnePlayer" />
 
 </RelativeLayout>
