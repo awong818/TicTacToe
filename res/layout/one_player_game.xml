@@ -4,11 +4,10 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
-   
+    <TextView
+        
+        ></TextView>
 
-
-
-    <LinearLayout android:id="@+id/row_1" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
     <Button
         android:id="@+id/button1"
         style="?android:attr/buttonStyleSmall"
@@ -16,6 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/Nothing" />
+
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+
         <Button android:id="@+id/button2" style="?android:attr/buttonStyleSmall" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/Nothing" />
 
         <Button android:id="@+id/button3" style="?android:attr/buttonStyleSmall" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/Nothing" />
@@ -39,7 +41,7 @@
         android:layout_height="1dp"
         android:background="@android:color/black" />
 
-<LinearLayout android:id="@+id/row_2" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 
         <Button android:id="@+id/button10" style="?android:attr/buttonStyleSmall" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/Nothing" />
 
@@ -66,7 +68,6 @@
     android:background="@android:color/black" />
 
     <LinearLayout
-        android:id="@+id/row_3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -150,7 +151,6 @@
         android:background="@android:color/black" />
 
     <LinearLayout
-        android:id="@+id/row_4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -234,7 +234,6 @@
         android:background="@android:color/black" />
     
      <LinearLayout
-         android:id="@+id/row_5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
         android:orientation="horizontal">
@@ -318,7 +317,6 @@
          android:background="@android:color/black" />
 
       <LinearLayout
-          android:id="@+id/row_6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -402,7 +400,6 @@
           android:background="@android:color/black" />
     
        <LinearLayout
-           android:id="@+id/row_7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -472,7 +469,7 @@
             android:text="@string/Nothing" />
         
         <Button
-            android:id="@+id/button63"
+            android:id="@+id/button64"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -486,20 +483,11 @@
            android:background="@android:color/black" />
     
         <LinearLayout
-            android:id="@+id/row_8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" 
             android:orientation="horizontal">
 
             
-        <Button
-            android:id="@+id/button64"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/Nothing" />
-
         <Button
             android:id="@+id/button65"
             style="?android:attr/buttonStyleSmall"
@@ -548,7 +536,6 @@
             android:layout_weight="1"
             android:text="@string/Nothing" />
 
-
         <Button
             android:id="@+id/button71"
             style="?android:attr/buttonStyleSmall"
@@ -557,8 +544,17 @@
             android:layout_weight="1"
             android:text="@string/Nothing" />
 
+
         <Button
             android:id="@+id/button72"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Nothing" />
+
+        <Button
+            android:id="@+id/button73"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -572,7 +568,6 @@
         android:background="@android:color/black" />
                 
          <LinearLayout
-             android:id="@+id/row_9"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
