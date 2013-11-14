@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
+//import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,6 +21,8 @@ public class TicTacToeBoard extends View{
 	private Rect drawingRect;
 	private int cursorXPos, cursorYPos;
 	
+	private int playerturn = 1;
+	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
 	public TicTacToeBoard(Context context, AttributeSet attributes)
 	{
 		super(context, attributes);
@@ -119,8 +121,22 @@ public class TicTacToeBoard extends View{
 			{
 				if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 				{
-					boardData[cursorXPos][cursorYPos] += 1;
-					boardData[cursorXPos][cursorYPos] %= 3;
+					if(moveIsValid(cursorXPos, cursorYPos))
+					{
+						if(playerturn == 1)
+						{
+							boardData[cursorXPos][cursorYPos] = 1;
+							getBoundsForNextMove(cursorXPos, cursorYPos);
+							playerturn = 2;
+						}
+						else
+						{
+							boardData[cursorXPos][cursorYPos] = 2;
+							getBoundsForNextMove(cursorXPos, cursorYPos);
+							playerturn = 1;
+						}
+					}
+					//boardData[cursorXPos][cursorYPos] %= 3;
 				}
 				cursorXPos = -1;
 				cursorYPos = -1;
@@ -131,6 +147,56 @@ public class TicTacToeBoard extends View{
 		super.onTouchEvent(e);
 		return true;
 	}
+	
+	private void getBoundsForNextMove(int row, int col)
+	{
+					if((row == 0 || row == 3 || row == 6) && (col ==0 || col == 3 || col == 6))
+					{
+						rLow = 0; rHigh = 2; cLow = 0; cHigh = 2;
+					}
+					else if((row == 0 || row == 3 || row == 6) && (col ==1 || col == 4 || col == 7))
+					{
+						rLow = 0; rHigh = 2; cLow = 3; cHigh = 5;
+					}
+					else if((row == 0 || row == 3 || row == 6) && (col ==2 || col == 5 || col == 8))
+					{
+						rLow = 0; rHigh = 2; cLow = 6; cHigh = 8;
+					}
+					else if((row == 1 || row == 4 || row == 7) && (col == 0|| col == 3 || col == 6))
+					{
+						rLow = 3; rHigh = 5; cLow = 0; cHigh = 2;
+					}
+					else if((row == 1 || row == 4 || row == 7) && (col == 1 || col == 4 || col == 7))
+					{
+						rLow = 3; rHigh = 5; cLow = 3; cHigh = 5;
+					}
+					else if((row == 1 || row == 4 || row == 7) && (col == 2 || col == 5 || col == 8))
+					{
+						rLow = 3; rHigh = 5; cLow = 6; cHigh = 8;
+					}
+					else if((row == 2 || row == 5 || row == 8) && (col == 0 || col == 3 || col == 6))
+					{
+						rLow = 6; rHigh = 8; cLow = 0; cHigh = 2;
+					}
+					else if((row == 2 || row == 5 || row == 8) && (col == 1 || col == 4 || col == 7))
+					{
+						rLow = 6; rHigh = 8; cLow = 3; cHigh = 5;
+					}
+					else if((row == 2 || row == 5 || row == 8) && (col == 2 || col == 5 || col == 8))
+					{
+						rLow = 6; rHigh = 8; cLow = 6; cHigh = 8;
+					}
+				}
+	
+	private boolean moveIsValid(int row, int col)
+	{
+		if(row >= rLow && row <= rHigh && col >= cLow && col <= cHigh)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	
 	private void translateToBoardPosition(int x, int y)
 	{
