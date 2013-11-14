@@ -14,8 +14,11 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-public class TicTacToeBoard extends View{
-	private Paint mBitmapPaint, mHighlightPaint, mLinePaint;
+
+public class TicTacToeBoard extends View
+{
+	private Paint mBitmapPaint, mHighlightPaint, mLinePaint, mGreyOutPaint;
+
 	private int tileSize;
 	private int xWhitespace, yWhitespace;
 	private Bitmap xMark, oMark;
@@ -26,11 +29,14 @@ public class TicTacToeBoard extends View{
 	
 	private int playerturn = 1;
 	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
+
 	ArrayList<ViewWasTouchedListener> listeners = new ArrayList<ViewWasTouchedListener>();
 	
 	public void setWasTouchedListener(ViewWasTouchedListener listener){
 	    listeners.add(listener);
 	}
+	
+
 	
 	public TicTacToeBoard(Context context, AttributeSet attributes)
 	{
@@ -40,18 +46,22 @@ public class TicTacToeBoard extends View{
 		mHighlightPaint.setARGB(127, 255, 255, 0);
 		mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mLinePaint.setARGB(255, 0, 0, 0);
+		mGreyOutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mGreyOutPaint.setARGB(127, 0, 0, 0);
 		boardData = new int[9][9];
 		drawingRect = new Rect(0, 0, 0, 0);
 		cursorXPos = -1;
 		cursorYPos = -1;
 	}
-	
+
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
+		// Determine size of tile
 		tileSize = Math.min((w - getPaddingLeft() - getPaddingRight()) / 9, (h - getPaddingTop() - getPaddingBottom()) / 9);
 		xWhitespace = (w - tileSize * 9) / 2;
 		yWhitespace = (h - tileSize * 9) / 2;
 		
+		// Resize oMark and xMark bitmap size to the smallest possible
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeResource(getResources(), R.drawable.tictactoeo, options);
@@ -86,11 +96,14 @@ public class TicTacToeBoard extends View{
 	
 	protected void onDraw(Canvas canvas)
 	{
+		// Draw grid
 		for (int i = 1; i < 9; i++)
 		{
 			canvas.drawLine((float)xWhitespace + i * tileSize, (float)yWhitespace, (float)xWhitespace + i * tileSize, (float)yWhitespace + tileSize * 9, mLinePaint);
 			canvas.drawLine((float)xWhitespace, (float)yWhitespace + i * tileSize, (float)xWhitespace + tileSize * 9, (float)yWhitespace + i * tileSize, mLinePaint);
 		}
+		
+		// Draw X and O marks on grid as appropriate
 		drawingRect.top = yWhitespace;
 		drawingRect.bottom = yWhitespace + tileSize;
 		for (int i = 0; i < 9; i++)
@@ -109,7 +122,27 @@ public class TicTacToeBoard extends View{
 			drawingRect.top += tileSize;
 			drawingRect.bottom += tileSize;
 		}
-		if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
+		
+		// Grey out all invalid spaces
+		drawingRect.top = yWhitespace;
+		drawingRect.bottom = yWhitespace + tileSize * 3;
+		for (int i = 0; i < 3; i++)
+		{
+			drawingRect.left = xWhitespace;
+			drawingRect.right = xWhitespace + tileSize * 3;
+			for (int j = 0; j < 3; j++)
+			{
+				if (j * 3 < cLow || j * 3 > cHigh || i * 3 < rLow || i * 3 > rHigh)
+					canvas.drawRect(drawingRect, mGreyOutPaint);
+				drawingRect.left += tileSize * 3;
+				drawingRect.right += tileSize * 3;
+			}
+			drawingRect.top += tileSize * 3;
+			drawingRect.bottom += tileSize * 3;
+		}
+		
+		// Highlight box where the pointer is located
+		if (moveIsValid(cursorYPos, cursorXPos) && cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 		{
 			drawingRect.left = xWhitespace + cursorXPos * tileSize;
 			drawingRect.top = yWhitespace + cursorYPos * tileSize;
@@ -121,27 +154,31 @@ public class TicTacToeBoard extends View{
 	
 	public boolean onTouchEvent(MotionEvent e)
 	{
+		// If there is no current action, set current action to the one described in this event
 		if (curActionPointer == -1 && e.getActionMasked() == MotionEvent.ACTION_DOWN)
 			curActionPointer = e.getPointerId(0);
+		
+		// Only process if the event describes the current action of interest
 		if (curActionPointer == e.getPointerId(0))
 		{
 			translateToBoardPosition((int)e.getX(), (int)e.getY());
+			// On release
 			if (e.getActionMasked() == MotionEvent.ACTION_UP)
 			{
 				if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 				{
-					if(moveIsValid(cursorXPos, cursorYPos))
+					if (moveIsValid(cursorYPos, cursorXPos))
 					{
-						if(playerturn == 1)
+						if (playerturn == 1)
 						{
 							boardData[cursorXPos][cursorYPos] = 1;
-							getBoundsForNextMove(cursorXPos, cursorYPos);
+							getBoundsForNextMove(cursorYPos, cursorXPos);
 							playerturn = 2;
 						}
 						else
 						{
 							boardData[cursorXPos][cursorYPos] = 2;
-							getBoundsForNextMove(cursorXPos, cursorYPos);
+							getBoundsForNextMove(cursorYPos, cursorXPos);
 							playerturn = 1;
 						}
 						for (ViewWasTouchedListener listener:listeners){
@@ -150,6 +187,7 @@ public class TicTacToeBoard extends View{
 					}
 					//boardData[cursorXPos][cursorYPos] %= 3;
 				}
+				// Reset current action to null
 				cursorXPos = -1;
 				cursorYPos = -1;
 				curActionPointer = -1;
@@ -163,51 +201,15 @@ public class TicTacToeBoard extends View{
 	
 	private void getBoundsForNextMove(int row, int col)
 	{
-					if((row == 0 || row == 3 || row == 6) && (col ==0 || col == 3 || col == 6))
-					{
-						rLow = 0; rHigh = 2; cLow = 0; cHigh = 2;
-					}
-					else if((row == 0 || row == 3 || row == 6) && (col ==1 || col == 4 || col == 7))
-					{
-						rLow = 0; rHigh = 2; cLow = 3; cHigh = 5;
-					}
-					else if((row == 0 || row == 3 || row == 6) && (col ==2 || col == 5 || col == 8))
-					{
-						rLow = 0; rHigh = 2; cLow = 6; cHigh = 8;
-					}
-					else if((row == 1 || row == 4 || row == 7) && (col == 0|| col == 3 || col == 6))
-					{
-						rLow = 3; rHigh = 5; cLow = 0; cHigh = 2;
-					}
-					else if((row == 1 || row == 4 || row == 7) && (col == 1 || col == 4 || col == 7))
-					{
-						rLow = 3; rHigh = 5; cLow = 3; cHigh = 5;
-					}
-					else if((row == 1 || row == 4 || row == 7) && (col == 2 || col == 5 || col == 8))
-					{
-						rLow = 3; rHigh = 5; cLow = 6; cHigh = 8;
-					}
-					else if((row == 2 || row == 5 || row == 8) && (col == 0 || col == 3 || col == 6))
-					{
-						rLow = 6; rHigh = 8; cLow = 0; cHigh = 2;
-					}
-					else if((row == 2 || row == 5 || row == 8) && (col == 1 || col == 4 || col == 7))
-					{
-						rLow = 6; rHigh = 8; cLow = 3; cHigh = 5;
-					}
-					else if((row == 2 || row == 5 || row == 8) && (col == 2 || col == 5 || col == 8))
-					{
-						rLow = 6; rHigh = 8; cLow = 6; cHigh = 8;
-					}
-				}
+		rLow = row % 3 * 3;
+		rHigh = row % 3 * 3 + 2;
+		cLow = col % 3 * 3;
+		cHigh = col % 3 * 3 + 2;
+	}
 	
 	private boolean moveIsValid(int row, int col)
 	{
-		if(row >= rLow && row <= rHigh && col >= cLow && col <= cHigh)
-		{
-			return true;
-		}
-		return false;
+		return row >= rLow && row <= rHigh && col >= cLow && col <= cHigh && boardData[col][row] == 0;
 	}
 	
 	
