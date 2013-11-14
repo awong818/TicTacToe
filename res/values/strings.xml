@@ -10,5 +10,13 @@
     <string name="Nothing"></string>
     <string name="testButton">Test Mode</string>
     <string name="confirmMove">Confirm</string>
+    <string name="winSquare1">Player1 won a square!</string>
+    <string name="winSquare2">Player2 won a square!</string>
+    <string name="winGame1">Player1 won the game!</string>
+     <string name="winGame2">Player2 won the game!</string>
+     <string name="move">Move</string>
+     <string name="check">Checking for Win</string>
+     <string name="turn1">Player 1 turn</string>
+     <string name="turn2">Player 2 turn</string>
 
 </resources>

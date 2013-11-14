@@ -173,16 +173,16 @@ public class TicTacToeBoard extends View
 						{
 							boardData[cursorXPos][cursorYPos] = 1;
 							getBoundsForNextMove(cursorYPos, cursorXPos);
-							playerturn = 2;
+							
 						}
 						else
 						{
 							boardData[cursorXPos][cursorYPos] = 2;
 							getBoundsForNextMove(cursorYPos, cursorXPos);
-							playerturn = 1;
 						}
 						for (ViewWasTouchedListener listener:listeners){
 							   listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
+						playerturn *= -1;
 						
 					}
 					//boardData[cursorXPos][cursorYPos] %= 3;
