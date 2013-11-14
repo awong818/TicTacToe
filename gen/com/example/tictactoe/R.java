@@ -35,7 +35,8 @@ containing a value of this type.
     }
     public static final class id {
         public static final int OnePlayer=0x7f080001;
-        public static final int action_settings=0x7f080055;
+        public static final int PlayerTurn=0x7f080053;
+        public static final int action_settings=0x7f080056;
         public static final int button1=0x7f080004;
         public static final int button10=0x7f08000c;
         public static final int button11=0x7f08000d;
@@ -116,8 +117,8 @@ containing a value of this type.
         public static final int button80=0x7f080051;
         public static final int button81=0x7f080052;
         public static final int button9=0x7f08000b;
-        public static final int confirmMove=0x7f080054;
-        public static final int gameBoard=0x7f080053;
+        public static final int confirmMove=0x7f080055;
+        public static final int gameBoard=0x7f080054;
         public static final int testButton=0x7f080002;
         public static final int textView1=0x7f080003;
     }

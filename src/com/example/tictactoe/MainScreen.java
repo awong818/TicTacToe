@@ -15,11 +15,11 @@ public class MainScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		final Button onePlayer = (Button)this.findViewById(R.id.OnePlayer);
-		onePlayer.setOnClickListener(new OnClickListener() {
+		//final Button onePlayer = (Button)this.findViewById(R.id.OnePlayer);
+		/*onePlayer.setOnClickListener(new OnClickListener() {
 		public void onClick(View v) {
 			Intent intent = new Intent(MainScreen.this, OnePlayerGame.class);
-		}}); 
+		}}); */
 	}
 
 	@Override

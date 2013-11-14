@@ -1,5 +1,7 @@
 package com.example.tictactoe;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.util.AttributeSet;
 //import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
 
 public class TicTacToeBoard extends View{
 	private Paint mBitmapPaint, mHighlightPaint, mLinePaint;
@@ -23,6 +26,12 @@ public class TicTacToeBoard extends View{
 	
 	private int playerturn = 1;
 	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
+	ArrayList<ViewWasTouchedListener> listeners = new ArrayList<ViewWasTouchedListener>();
+	
+	public void setWasTouchedListener(ViewWasTouchedListener listener){
+	    listeners.add(listener);
+	}
+	
 	public TicTacToeBoard(Context context, AttributeSet attributes)
 	{
 		super(context, attributes);
@@ -135,6 +144,9 @@ public class TicTacToeBoard extends View{
 							getBoundsForNextMove(cursorXPos, cursorYPos);
 							playerturn = 1;
 						}
+						for (ViewWasTouchedListener listener:listeners){
+							   listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
+						
 					}
 					//boardData[cursorXPos][cursorYPos] %= 3;
 				}
@@ -143,6 +155,7 @@ public class TicTacToeBoard extends View{
 				curActionPointer = -1;
 			}
 			invalidate();
+			}	
 		}
 		super.onTouchEvent(e);
 		return true;
