@@ -13,7 +13,7 @@ import android.view.View;
 
 public class TicTacToeBoard extends View
 {
-	private Paint mBitmapPaint, mHighlightPaint, mLinePaint;
+	private Paint mBitmapPaint, mHighlightPaint, mLinePaint, mGreyOutPaint;
 	private int tileSize;
 	private int xWhitespace, yWhitespace;
 	private Bitmap xMark, oMark;
@@ -33,6 +33,8 @@ public class TicTacToeBoard extends View
 		mHighlightPaint.setARGB(127, 255, 255, 0);
 		mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mLinePaint.setARGB(255, 0, 0, 0);
+		mGreyOutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mGreyOutPaint.setARGB(127, 0, 0, 0);
 		boardData = new int[9][9];
 		drawingRect = new Rect(0, 0, 0, 0);
 		cursorXPos = -1;
@@ -108,8 +110,26 @@ public class TicTacToeBoard extends View
 			drawingRect.bottom += tileSize;
 		}
 		
+		// Grey out all invalid spaces
+		drawingRect.top = yWhitespace;
+		drawingRect.bottom = yWhitespace + tileSize * 3;
+		for (int i = 0; i < 3; i++)
+		{
+			drawingRect.left = xWhitespace;
+			drawingRect.right = xWhitespace + tileSize * 3;
+			for (int j = 0; j < 3; j++)
+			{
+				if (j * 3 < cLow || j * 3 > cHigh || i * 3 < rLow || i * 3 > rHigh)
+					canvas.drawRect(drawingRect, mGreyOutPaint);
+				drawingRect.left += tileSize * 3;
+				drawingRect.right += tileSize * 3;
+			}
+			drawingRect.top += tileSize * 3;
+			drawingRect.bottom += tileSize * 3;
+		}
+		
 		// Highlight box where the pointer is located
-		if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
+		if (moveIsValid(cursorYPos, cursorXPos) && cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 		{
 			drawingRect.left = xWhitespace + cursorXPos * tileSize;
 			drawingRect.top = yWhitespace + cursorYPos * tileSize;
@@ -134,18 +154,18 @@ public class TicTacToeBoard extends View
 			{
 				if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 				{
-					if (moveIsValid(cursorXPos, cursorYPos))
+					if (moveIsValid(cursorYPos, cursorXPos))
 					{
 						if (playerturn == 1)
 						{
 							boardData[cursorXPos][cursorYPos] = 1;
-							getBoundsForNextMove(cursorXPos, cursorYPos);
+							getBoundsForNextMove(cursorYPos, cursorXPos);
 							playerturn = 2;
 						}
 						else
 						{
 							boardData[cursorXPos][cursorYPos] = 2;
-							getBoundsForNextMove(cursorXPos, cursorYPos);
+							getBoundsForNextMove(cursorYPos, cursorXPos);
 							playerturn = 1;
 						}
 					}
@@ -172,7 +192,7 @@ public class TicTacToeBoard extends View
 	
 	private boolean moveIsValid(int row, int col)
 	{
-		return row >= rLow && row <= rHigh && col >= cLow && col <= cHigh;
+		return row >= rLow && row <= rHigh && col >= cLow && col <= cHigh && boardData[col][row] == 0;
 	}
 	
 	
