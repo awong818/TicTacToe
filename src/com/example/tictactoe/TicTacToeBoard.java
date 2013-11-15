@@ -9,9 +9,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-//import android.util.Log;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+//import android.util.Log;
+import android.widget.TextView;
 
 
 
@@ -23,6 +25,7 @@ public class TicTacToeBoard extends View
 	private int xWhitespace, yWhitespace;
 	private Bitmap xMark, oMark;
 	private int[][] boardData;
+	private int[][] largeBoardData;
 	private int curActionPointer = -1;
 	private Rect drawingRect;
 	private int cursorXPos, cursorYPos;
@@ -32,11 +35,10 @@ public class TicTacToeBoard extends View
 
 	ArrayList<ViewWasTouchedListener> listeners = new ArrayList<ViewWasTouchedListener>();
 	
-	public void setWasTouchedListener(ViewWasTouchedListener listener){
+	public void setWasTouchedListener(ViewWasTouchedListener listener)
+	{
 	    listeners.add(listener);
 	}
-	
-
 	
 	public TicTacToeBoard(Context context, AttributeSet attributes)
 	{
@@ -49,6 +51,7 @@ public class TicTacToeBoard extends View
 		mGreyOutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mGreyOutPaint.setARGB(127, 0, 0, 0);
 		boardData = new int[9][9];
+		largeBoardData = new int[3][3];
 		drawingRect = new Rect(0, 0, 0, 0);
 		cursorXPos = -1;
 		cursorYPos = -1;
@@ -66,7 +69,7 @@ public class TicTacToeBoard extends View
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeResource(getResources(), R.drawable.tictactoeo, options);
 		
-		options.inSampleSize = calculateInSampleSize(options, tileSize, tileSize);
+		options.inSampleSize = calculateInSampleSize(options, tileSize * 3, tileSize * 3);
 		
 		options.inJustDecodeBounds = false;
 		oMark = BitmapFactory.decodeResource(getResources(), R.drawable.tictactoeo, options);
@@ -112,10 +115,13 @@ public class TicTacToeBoard extends View
 			drawingRect.right = xWhitespace + tileSize;
 			for (int j = 0; j < 9; j++)
 			{
-				if (boardData[j][i] == 1)
-					canvas.drawBitmap(xMark, null, drawingRect, mBitmapPaint);
-				else if (boardData[j][i] == 2)
-					canvas.drawBitmap(oMark, null, drawingRect, mBitmapPaint);
+				if (largeBoardData[j / 3][i / 3] == 0)
+				{
+					if (boardData[j][i] == 1)
+						canvas.drawBitmap(xMark, null, drawingRect, mBitmapPaint);
+					else if (boardData[j][i] == -1)
+						canvas.drawBitmap(oMark, null, drawingRect, mBitmapPaint);
+				}
 				drawingRect.left += tileSize;
 				drawingRect.right += tileSize;
 			}
@@ -123,7 +129,7 @@ public class TicTacToeBoard extends View
 			drawingRect.bottom += tileSize;
 		}
 		
-		// Grey out all invalid spaces
+		// Draw large X and Os and grey out all invalid spaces
 		drawingRect.top = yWhitespace;
 		drawingRect.bottom = yWhitespace + tileSize * 3;
 		for (int i = 0; i < 3; i++)
@@ -132,6 +138,10 @@ public class TicTacToeBoard extends View
 			drawingRect.right = xWhitespace + tileSize * 3;
 			for (int j = 0; j < 3; j++)
 			{
+				if (largeBoardData[j][i] == 1)
+					canvas.drawBitmap(xMark, null, drawingRect,  mBitmapPaint);
+				else if (largeBoardData[j][i] == -1)
+					canvas.drawBitmap(oMark,  null,  drawingRect, mBitmapPaint);
 				if (j * 3 < cLow || j * 3 > cHigh || i * 3 < rLow || i * 3 > rHigh)
 					canvas.drawRect(drawingRect, mGreyOutPaint);
 				drawingRect.left += tileSize * 3;
@@ -165,7 +175,7 @@ public class TicTacToeBoard extends View
 			// On release
 			if (e.getActionMasked() == MotionEvent.ACTION_UP)
 			{
-				if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
+				/*if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
 				{
 					if (moveIsValid(cursorYPos, cursorXPos))
 					{
@@ -180,20 +190,21 @@ public class TicTacToeBoard extends View
 							boardData[cursorXPos][cursorYPos] = 2;
 							getBoundsForNextMove(cursorYPos, cursorXPos);
 						}
-						for (ViewWasTouchedListener listener:listeners){
+						for (ViewWasTouchedListener listener:listeners)
+						{
 							   listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
-						playerturn *= -1;
-						
-					}
+							   playerturn *= -1;
+						}
 					//boardData[cursorXPos][cursorYPos] %= 3;
-				}
+					}
 				// Reset current action to null
-				cursorXPos = -1;
-				cursorYPos = -1;
+				//cursorXPos = -1;
+				//cursorYPos = -1;
+				curActionPointer = -1;
+				}*/
 				curActionPointer = -1;
 			}
 			invalidate();
-			}	
 		}
 		super.onTouchEvent(e);
 		return true;
@@ -205,10 +216,21 @@ public class TicTacToeBoard extends View
 		rHigh = row % 3 * 3 + 2;
 		cLow = col % 3 * 3;
 		cHigh = col % 3 * 3 + 2;
+		if (largeBoardData[cLow / 3][rLow / 3] != 0)
+		{
+			rLow = 0;
+			rHigh = 9;
+			cLow = 0;
+			cHigh = 9;
+		}
 	}
 	
 	private boolean moveIsValid(int row, int col)
 	{
+		if (row < 0 || row >= 9 || col < 0 || col >= 9)
+			return false;
+		if (largeBoardData[col / 3][row / 3] != 0)
+			return false;
 		return row >= rLow && row <= rHigh && col >= cLow && col <= cHigh && boardData[col][row] == 0;
 	}
 	
@@ -217,5 +239,69 @@ public class TicTacToeBoard extends View
 	{
 		cursorXPos = (x - xWhitespace) / tileSize;
 		cursorYPos = (y - yWhitespace) / tileSize;
+	}
+	
+	public boolean confirmMove()
+	{
+		if (!(cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9 && moveIsValid(cursorYPos, cursorXPos)))
+			return false;
+		boardData[cursorXPos][cursorYPos] = playerturn;
+		getBoundsForNextMove(cursorYPos, cursorXPos);
+		for (ViewWasTouchedListener listener:listeners)
+			listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
+		playerturn *= -1;
+		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3);
+		cursorXPos = -1;
+		cursorYPos = -1;
+		invalidate();
+		return true;
+	}
+	
+	// Returns 0 if not completed. Returns 1 if player one completed. Returns -1 if player 2 completed.
+	public int isCompleted(int row, int col)
+	{
+		// Check rows
+		for (int i = 0; i < 3; i++)
+		{
+			int sum = 0;
+			for (int j = 0; j < 3; j++)
+				sum += boardData[col * 3 + j][row * 3 + i];
+			if (sum == 3)
+				return 1;
+			if (sum == -3)
+				return -1;
+		}	
+	
+		// Check columns
+		for (int i = 0; i < 3; i++)
+		{
+			int sum = 0;
+			for (int j = 0; j < 3; j++)
+				sum += boardData[col * 3 + i][row * 3 + j];
+			if (sum == 3)
+				return 1;
+			if (sum == -3)
+				return -1;
+		}	
+		
+		// Check diagonals
+		int sum = 0;
+		for (int i = 0; i < 3; i++)
+			sum += boardData[col * 3 + i][row * 3 + i];
+		if (sum == 3)
+			return 1;
+		if (sum == -3)
+			return -1;
+		
+		sum = 0;
+		for (int i = 0; i < 3; i++)
+			sum += boardData[col * 3 + i][row * 3 + 2 - i];
+		if (sum == 3)
+			return 1;
+		if (sum == -3)
+			return -1;
+		
+		// All checks failed
+		return 0;
 	}
 }

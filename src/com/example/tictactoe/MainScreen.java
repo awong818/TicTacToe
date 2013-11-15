@@ -3,10 +3,9 @@ package com.example.tictactoe;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 public class MainScreen extends Activity {
 
@@ -32,6 +31,12 @@ public class MainScreen extends Activity {
 	public void toTestGame(View view)
 	{
 		Intent intent = new Intent(this, TestGame.class);
+		startActivity(intent);
+	}
+	
+	public void toTwoPlayer(View view)
+	{
+		Intent intent = new Intent(this, TwoPlayerGame.class);
 		startActivity(intent);
 	}
 }

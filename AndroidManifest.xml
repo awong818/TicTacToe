@@ -25,6 +25,9 @@
         <activity
             android:name="com.example.tictactoe.TestGame">
         </activity>
+        <activity
+            android:name="com.example.tictactoe.TwoPlayerGame">
+        </activity>
     </application>
 
 </manifest>

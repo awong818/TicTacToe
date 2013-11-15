@@ -2,29 +2,27 @@ package com.example.tictactoe;
 
 //import com.example.tictactoe.R.string;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.os.Bundle;
 
 
 
 public class TwoPlayerGame extends Activity{
+	private TicTacToeBoard boardView;
 	
 	boolean playerMove = false;
-	protected void onCreate(Bundle savedInstanceState) {
+	boolean player1Turn = true;
+	
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.two_player_game);
 		
-		Button[] buttonArray =  new Button[81];
-		
-	//	LinearLayout row1 = (LinearLayout) getViewById(R.id.row1);
-		playGame();
+		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
+		//playGame();
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,6 +80,13 @@ public class TwoPlayerGame extends Activity{
 	public boolean gameEnd()
 	{ // detect whether someone has won the game
 		return true;
+	}
+	
+	public void endMove(View view)
+	{
+		if (boardView.confirmMove())
+		{
+		}
 	}
 	
 /*	public void updateTurnTextView(string s)

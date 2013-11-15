@@ -9,19 +9,20 @@
     tools:context=".MainActivity" >
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/TwoPlayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/TwoPlayer" />
+        android:text="@string/TwoPlayer" 
+        android:onClick="toTwoPlayer" />
 
     <Button
         android:id="@+id/OnePlayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button2"
-        android:layout_alignRight="@+id/button2"
+        android:layout_above="@+id/TwoPlayer"
+        android:layout_alignRight="@+id/TwoPlayer"
         android:layout_marginBottom="28dp"
         android:text="@string/OnePlayer" />
     
