@@ -3,6 +3,7 @@ package com.example.tictactoe;
 //import com.example.tictactoe.R.string;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -114,6 +115,12 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 			t.setText(R.string.turn2);
 	}
 	
+	public void toMainMenu(View view)
+	{
+		Intent intent = new Intent(this, MainScreen.class);
+		startActivity(intent);
+	}
+	
 	public void onFinishMove()
 	{
 		TextView t = (TextView) findViewById(R.id.PlayerTurn);
@@ -124,6 +131,7 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 			t.setText(R.string.turn2);
 	}
 	
+	
 	public void onViewChanged(boolean isValidMove)
 	{
 		//Log.d("TicTacToe", "" + isValidMove);
@@ -133,12 +141,25 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 			confirmButton.setEnabled(false);
 	}
 	
+	public void resetBoard(View view)
+	{
+		finish();
+		startActivity(getIntent());
+	}
+	
 /*	public void updateTurnTextView(string s)
 	{
 		
 	}
 	*/
 	
-	
+	public void onWin()
+	{
+		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		if (player1Turn)
+			t.setText(R.string.winner1);
+		else
+			t.setText(R.string.winner2);
+	}
 	
 }

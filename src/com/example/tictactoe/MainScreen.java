@@ -39,4 +39,10 @@ public class MainScreen extends Activity {
 		Intent intent = new Intent(this, TwoPlayerGame.class);
 		startActivity(intent);
 	}
+	
+	public void toOnePlayer(View view)
+	{
+		Intent intent = new Intent(this, OnePlayerGame.class);
+		startActivity(intent);
+	}
 }

@@ -28,4 +28,22 @@
         android:onClick="endMove"
         android:layout_weight="1">
     </Button>
+    
+    <Button
+        android:id="@+id/resetBoard"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:text="@string/resetBoard"
+        android:onClick="resetBoard"
+        android:layout_weight="1">
+    </Button>
+    
+    <Button
+        android:id="@+id/Quit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:text="@string/Quit"
+        android:onClick="toMainMenu"
+        android:layout_weight="1">
+    </Button>
    </LinearLayout>

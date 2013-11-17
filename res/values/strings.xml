@@ -18,5 +18,9 @@
      <string name="check">Checking for Win</string>
      <string name="turn1">Player 1 turn</string>
      <string name="turn2">Player 2 turn</string>
+     <string name="winner1">Player 1 has won the game!</string>
+	<string name="winner2">Player 2 has won the game!</string>	
+		<string name="Quit">Quit</string>	
+		<string name="resetBoard">Restart Game</string>	
 
 </resources>

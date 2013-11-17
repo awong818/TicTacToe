@@ -54,6 +54,11 @@ public class TestGame extends Activity implements ViewWasTouchedListener {
 		
 	}
 
+	public void onWin()
+	{
+		
+	
+	}
 	@Override
 	public void onViewTouched(int row, int col, int player) {
 		// TODO Auto-generated method stub

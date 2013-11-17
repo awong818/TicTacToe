@@ -1,6 +1,7 @@
 package com.example.tictactoe;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -216,6 +217,7 @@ public class TicTacToeBoard extends View
 		}
 	}
 	
+	
 	private boolean moveIsValid(int row, int col)
 	{
 		if (row < 0 || row >= 9 || col < 0 || col >= 9)
@@ -239,13 +241,22 @@ public class TicTacToeBoard extends View
 			return false;
 		
 		boardData[cursorXPos][cursorYPos] = playerturn;
-		getBoundsForNextMove(cursorYPos, cursorXPos);
+		
 		for (ViewWasTouchedListener listener:listeners)
 			listener.onFinishMove();
 		playerturn *= -1;
-		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3);
+		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3, boardData);
+		
+			
+		getBoundsForNextMove(cursorYPos, cursorXPos);
 		cursorXPos = -1;
 		cursorYPos = -1;
+		if(isWin()!=0) // if a player won
+		{
+			cLow = -1; cHigh = -1; rLow = -1; rHigh = -1;
+			for (ViewWasTouchedListener listener:listeners)
+				listener.onWin();
+		}
 		invalidate();
 		for (ViewWasTouchedListener listener : listeners)
 			listener.onViewChanged(false);
@@ -253,14 +264,14 @@ public class TicTacToeBoard extends View
 	}
 	
 	// Returns 0 if not completed. Returns 1 if player one completed. Returns -1 if player 2 completed.
-	public int isCompleted(int row, int col)
+	public int isCompleted(int row, int col, int[][] board)
 	{
 		// Check rows
 		for (int i = 0; i < 3; i++)
 		{
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
-				sum += boardData[col * 3 + j][row * 3 + i];
+				sum += board[col * 3 + j][row * 3 + i];
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -272,7 +283,7 @@ public class TicTacToeBoard extends View
 		{
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
-				sum += boardData[col * 3 + i][row * 3 + j];
+				sum += board[col * 3 + i][row * 3 + j];
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -282,7 +293,7 @@ public class TicTacToeBoard extends View
 		// Check diagonals
 		int sum = 0;
 		for (int i = 0; i < 3; i++)
-			sum += boardData[col * 3 + i][row * 3 + i];
+			sum += board[col * 3 + i][row * 3 + i];
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -290,7 +301,7 @@ public class TicTacToeBoard extends View
 		
 		sum = 0;
 		for (int i = 0; i < 3; i++)
-			sum += boardData[col * 3 + i][row * 3 + 2 - i];
+			sum += board[col * 3 + i][row * 3 + 2 - i];
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -299,4 +310,37 @@ public class TicTacToeBoard extends View
 		// All checks failed
 		return 0;
 	}
+	
+	public int isWin()
+	{
+		return isCompleted(0,0, largeBoardData);
+	}
+	
+	public void CPUmove(int difficulty)
+	{
+		Random rand =  new Random();
+		int[] possSpots = new int[81];
+		int index = 0;
+		for(int i = 0; i < 9; i++)
+		{
+			for(int j = 0; j < 9; j++)
+			{
+				if(moveIsValid(i, j))
+				{
+					possSpots[index] = i*10+j;
+					index++;
+				}
+			}
+		}
+		
+		int choice = rand.nextInt(index+1);
+		
+		int move = possSpots[choice];
+		cursorXPos = move%10;
+		cursorYPos = move/10;
+		
+		confirmMove();
+		
+	}
+	
 }
