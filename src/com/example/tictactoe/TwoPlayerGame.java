@@ -156,10 +156,11 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 	public void onWin()
 	{
 		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		// Text is reversed because winner is the person who moved before the "current" player
 		if (player1Turn)
-			t.setText(R.string.winner1);
-		else
 			t.setText(R.string.winner2);
+		else
+			t.setText(R.string.winner1);
 	}
 	
 }

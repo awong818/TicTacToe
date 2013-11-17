@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
        android:orientation="vertical" 
        android:layout_width="match_parent" 
        android:layout_height="wrap_content"
@@ -7,26 +7,27 @@
        android:paddingRight="16dp">
     <TextView
     android:layout_width="fill_parent"
-    android:layout_height="30dp"
-    android:gravity="center_horizontal"
+    android:layout_height="wrap_content"
+    android:gravity="center"
     android:textSize="18sp" 
     android:id="@+id/PlayerTurn"
-    android:layout_weight="1"
     android:text="@string/turn1">
 	</TextView>
     
     <com.example.tictactoe.TicTacToeBoard
         android:id="@+id/gameBoard"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="10" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    
     <Button
         android:id="@+id/confirmMove"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
         android:text="@string/confirmMove"
         android:onClick="endMove"
-        android:layout_weight="1">
+        >
     </Button>
     
     <Button
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content" 
         android:text="@string/resetBoard"
         android:onClick="resetBoard"
-        android:layout_weight="1">
+        >
     </Button>
     
     <Button
@@ -44,6 +45,6 @@
         android:layout_height="wrap_content" 
         android:text="@string/Quit"
         android:onClick="toMainMenu"
-        android:layout_weight="1">
+		>
     </Button>
    </LinearLayout>
