@@ -99,11 +99,29 @@ public class TicTacToeBoard extends View
 	
 	protected void onDraw(Canvas canvas)
 	{
-		// Draw grid
-		for (int i = 1; i < 9; i++)
+		// Draw large grid
+		for (int i = 1; i < 3; i++)
 		{
-			canvas.drawLine((float)xWhitespace + i * tileSize, (float)yWhitespace, (float)xWhitespace + i * tileSize, (float)yWhitespace + tileSize * 9, mLinePaint);
-			canvas.drawLine((float)xWhitespace, (float)yWhitespace + i * tileSize, (float)xWhitespace + tileSize * 9, (float)yWhitespace + i * tileSize, mLinePaint);
+			// Vertical lines
+			canvas.drawLine(xWhitespace + i * tileSize * 3, yWhitespace, xWhitespace + i * tileSize * 3, yWhitespace + tileSize * 9, mLinePaint);
+			// Horizontal lines
+			canvas.drawLine(xWhitespace, yWhitespace + i * tileSize * 3, xWhitespace + tileSize * 9, yWhitespace + i * tileSize * 3, mLinePaint);
+		}
+		
+		// Draw small grids
+		float fractionTile = tileSize * 0.15f;
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int k = 1; k < 3; k++)
+				{
+					// Vertical lines
+					canvas.drawLine(xWhitespace + (k + i * 3) * tileSize, yWhitespace + fractionTile + j * 3 * tileSize, xWhitespace + (k + i * 3) * tileSize, yWhitespace - fractionTile + (j * 3 + 3) * tileSize, mLinePaint);
+					// Horizontal lines
+					canvas.drawLine(xWhitespace + fractionTile + i * 3 * tileSize, yWhitespace + (k + j * 3) * tileSize, xWhitespace - fractionTile + (i * 3 + 3) * tileSize, yWhitespace + (k + j * 3) * tileSize, mLinePaint);
+				}
+			}
 		}
 		
 		// Draw X and O marks on grid as appropriate
