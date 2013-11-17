@@ -68,8 +68,8 @@ public class TestGame extends Activity implements ViewWasTouchedListener {
 		
 		checkForMatches(row, col, player);
 		
-		//TextView t = (TextView) findViewById(R.id.PlayerTurn);
-		//t.setText(R.string.GameTitle);
+		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		t.setText(R.string.GameTitle);
 	}
 	
 	private boolean isWinner(int player)
@@ -181,6 +181,11 @@ public class TestGame extends Activity implements ViewWasTouchedListener {
 		return false;
 	}
 	
+	public void onFinishMove()
+	{
+	}
 	
-	
+	public void onViewChanged(boolean isValidMove)
+	{
+	}
 }

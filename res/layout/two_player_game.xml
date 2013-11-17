@@ -6,11 +6,13 @@
        android:paddingLeft="16dp"
        android:paddingRight="16dp">
     <TextView
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="30dp"
+    android:gravity="center_horizontal"
     android:textSize="18sp" 
     android:id="@+id/PlayerTurn"
-    android:layout_weight="1">
+    android:layout_weight="1"
+    android:text="@string/turn1">
 	</TextView>
     
     <com.example.tictactoe.TicTacToeBoard
@@ -20,7 +22,7 @@
         android:layout_weight="10" />
     <Button
         android:id="@+id/confirmMove"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
         android:text="@string/confirmMove"
         android:onClick="endMove"

@@ -174,37 +174,10 @@ public class TicTacToeBoard extends View
 			translateToBoardPosition((int)e.getX(), (int)e.getY());
 			// On release
 			if (e.getActionMasked() == MotionEvent.ACTION_UP)
-			{
-				/*if (cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9)
-				{
-					if (moveIsValid(cursorYPos, cursorXPos))
-					{
-						if (playerturn == 1)
-						{
-							boardData[cursorXPos][cursorYPos] = 1;
-							getBoundsForNextMove(cursorYPos, cursorXPos);
-							
-						}
-						else
-						{
-							boardData[cursorXPos][cursorYPos] = 2;
-							getBoundsForNextMove(cursorYPos, cursorXPos);
-						}
-						for (ViewWasTouchedListener listener:listeners)
-						{
-							   listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
-							   playerturn *= -1;
-						}
-					//boardData[cursorXPos][cursorYPos] %= 3;
-					}
-				// Reset current action to null
-				//cursorXPos = -1;
-				//cursorYPos = -1;
 				curActionPointer = -1;
-				}*/
-				curActionPointer = -1;
-			}
 			invalidate();
+			for (ViewWasTouchedListener listener : listeners)
+				listener.onViewChanged(moveIsValid(cursorYPos, cursorXPos));
 		}
 		super.onTouchEvent(e);
 		return true;
@@ -243,17 +216,21 @@ public class TicTacToeBoard extends View
 	
 	public boolean confirmMove()
 	{
+		// Check for valid move
 		if (!(cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9 && moveIsValid(cursorYPos, cursorXPos)))
 			return false;
+		
 		boardData[cursorXPos][cursorYPos] = playerturn;
 		getBoundsForNextMove(cursorYPos, cursorXPos);
 		for (ViewWasTouchedListener listener:listeners)
-			listener.onViewTouched(cursorXPos, cursorYPos, playerturn);
+			listener.onFinishMove();
 		playerturn *= -1;
 		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3);
 		cursorXPos = -1;
 		cursorYPos = -1;
 		invalidate();
+		for (ViewWasTouchedListener listener : listeners)
+			listener.onViewChanged(false);
 		return true;
 	}
 	

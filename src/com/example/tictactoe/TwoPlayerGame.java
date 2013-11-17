@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
-
-
-public class TwoPlayerGame extends Activity{
+public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
+{
 	private TicTacToeBoard boardView;
+	private Button confirmButton;
 	
 	boolean playerMove = false;
 	boolean player1Turn = true;
@@ -22,6 +24,8 @@ public class TwoPlayerGame extends Activity{
 		setContentView(R.layout.two_player_game);
 		
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
+		boardView.setWasTouchedListener(this);
+		confirmButton = (Button)findViewById(R.id.confirmMove);
 		//playGame();
 	}
 	
@@ -87,6 +91,46 @@ public class TwoPlayerGame extends Activity{
 		if (boardView.confirmMove())
 		{
 		}
+	}
+	
+	public void onViewTouched(int row, int col, int player) {
+		// TODO Auto-generated method stub
+		/*if(player == 1)
+		{
+			gameBoard[row][col] = 1;
+		}
+		if(player == -1)
+		{
+			gameBoard[row][col] = -1;
+		}*/
+		
+		//checkForMatches(row, col, player);
+		
+		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		player1Turn = !player1Turn;
+		if (player1Turn)
+			t.setText(R.string.turn1);
+		else
+			t.setText(R.string.turn2);
+	}
+	
+	public void onFinishMove()
+	{
+		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		player1Turn = !player1Turn;
+		if (player1Turn)
+			t.setText(R.string.turn1);
+		else
+			t.setText(R.string.turn2);
+	}
+	
+	public void onViewChanged(boolean isValidMove)
+	{
+		//Log.d("TicTacToe", "" + isValidMove);
+		if (isValidMove)
+			confirmButton.setEnabled(true);
+		else
+			confirmButton.setEnabled(false);
 	}
 	
 /*	public void updateTurnTextView(string s)
