@@ -3,15 +3,15 @@ package com.example.tictactoe;
 //import com.example.tictactoe.R.string;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
+public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, RestartAndQuitDialogFragment.Listener
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
@@ -117,8 +117,11 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 	
 	public void toMainMenu(View view)
 	{
-		Intent intent = new Intent(this, MainScreen.class);
-		startActivity(intent);
+		DialogFragment dialog = new RestartAndQuitDialogFragment();
+		Bundle bundle = new Bundle(1);
+		bundle.putBoolean("isQuit", true);
+		dialog.setArguments(bundle);
+		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
 	
 	public void onFinishMove()
@@ -143,8 +146,11 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 	
 	public void resetBoard(View view)
 	{
-		finish();
-		startActivity(getIntent());
+		DialogFragment dialog = new RestartAndQuitDialogFragment();
+		Bundle bundle = new Bundle(1);
+		bundle.putBoolean("isQuit", false);
+		dialog.setArguments(bundle);
+		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
 	
 /*	public void updateTurnTextView(string s)
@@ -163,4 +169,15 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener
 			t.setText(R.string.winner1);
 	}
 	
+	public void onConfirmToQuit()
+	{
+		Intent intent = new Intent(this, MainScreen.class);
+		startActivity(intent);
+	}
+	
+	public void onConfirmToRestart()
+	{
+		finish();
+		startActivity(getIntent());
+	}
 }
