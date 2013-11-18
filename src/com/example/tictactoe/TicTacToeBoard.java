@@ -333,7 +333,7 @@ public class TicTacToeBoard extends View
 			}
 		}
 		
-		int choice = rand.nextInt(index+1);
+		int choice = rand.nextInt(index);
 		
 		int move = possSpots[choice];
 		cursorXPos = move%9;
