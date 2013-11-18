@@ -54,7 +54,6 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	public void registerMove(View view)
 	{
 		int buttonId = view.getId();
-		
 	}
 	
 	public void playerMoved(View view)

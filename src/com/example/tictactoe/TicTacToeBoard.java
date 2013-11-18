@@ -333,6 +333,32 @@ public class TicTacToeBoard extends View
 			}
 		}
 		
+		// Medium and hard only processing
+		// Weeds out any moves that don't result in an immediate 3 in a row
+		if (difficulty >= 1)
+		{
+			int newIndex = 0;
+			int[] newPossSpots = new int[index];
+			for (int i = 0; i < index; i++)
+			{
+				int testRow = possSpots[i] / 9;
+				int testCol = possSpots[i] % 9;
+				boardData[testCol][testRow] = -1;
+				if (isCompleted(testRow / 3, testCol / 3, boardData) == -1)
+				{
+					newPossSpots[newIndex] = possSpots[i];
+					newIndex++;
+				}
+				boardData[testCol][testRow] = 0;
+			}
+			// If there were moves to weed out, replace old data with new data
+			if (newIndex > 0)
+			{
+				possSpots = newPossSpots;
+				index = newIndex;
+			}
+		}
+		
 		int choice = rand.nextInt(index);
 		
 		int move = possSpots[choice];
