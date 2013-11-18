@@ -16,8 +16,8 @@
     <string name="winGame2">Player 2 won the game!</string>
     <string name="move">Move</string>
     <string name="check">Checking for Win</string>
-    <string name="turn1">Player 1 turn</string>
-    <string name="turn2">Player 2 turn</string>
+    <string name="turn1">Player 1\'s turn</string>
+    <string name="turn2">Player 2\'s turn</string>
     <string name="turnSolo">Your turn</string>
     <string name="turnCPU">The CPU is thinking...</string>
     <string name="winner1">Player 1 has won the game!</string>
@@ -29,5 +29,15 @@
 	<string name="restartAndQuit">You will lose all current progress. Are you sure?</string>
 	<string name="cancel">Cancel</string>
 	<string name="restart">Restart</string>
+	<string name="pickDifficulty">Select CPU difficulty</string>
+	<string name="easy">Easy mode</string>
+	<string name="medium">Medium mode</string>
+	<string name="hard">Hard mode</string>
+	
+	<string-array name="difficulties">
+	    <item>Easy</item>
+	    <item>Medium</item>
+	    <item>Hard</item>
+	</string-array>
 
 </resources>

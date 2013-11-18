@@ -1,13 +1,15 @@
 package com.example.tictactoe;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.app.DialogFragment;
 import android.view.Menu;
 import android.view.View;
 
-public class MainScreen extends Activity {
+public class MainScreen extends Activity implements DifficultyDialogFragment.Listener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +42,17 @@ public class MainScreen extends Activity {
 		startActivity(intent);
 	}
 	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void toOnePlayer(View view)
 	{
+		DialogFragment dialog = new DifficultyDialogFragment();
+		dialog.show(getFragmentManager(), "difficulty");
+	}
+	
+	public void difficultyConfirmed(int difficulty)
+	{
 		Intent intent = new Intent(this, OnePlayerGame.class);
+		intent.putExtra("difficulty", difficulty);
 		startActivity(intent);
 	}
 }

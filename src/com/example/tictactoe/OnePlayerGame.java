@@ -17,6 +17,7 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
+	private int difficulty;
 	
 	boolean playerMove = false;
 	boolean player1Turn = true;
@@ -24,11 +25,23 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.two_player_game);
+		setContentView(R.layout.one_player_game);
 		
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
 		boardView.setWasTouchedListener(this);
 		confirmButton = (Button)findViewById(R.id.confirmMove);
+		difficulty = getIntent().getIntExtra("difficulty", 0);
+		switch (difficulty)
+		{
+		case 0: // Easy
+			((TextView)findViewById(R.id.difficultyText)).setText(R.string.easy);
+			break;
+		case 1: // Medium
+			((TextView)findViewById(R.id.difficultyText)).setText(R.string.medium);
+			break;
+		case 2: // Hard
+			((TextView)findViewById(R.id.difficultyText)).setText(R.string.hard);
+		}
 		//playGame();
 	}
 	
@@ -95,7 +108,7 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 		Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			public void run() {
-				boardView.CPUmove(1);
+				boardView.CPUmove(difficulty);
 			}
 		}, 1000);
 		//boardView.CPUmove(1);
