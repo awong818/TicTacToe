@@ -1,50 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-       android:orientation="vertical" 
-       android:layout_width="match_parent" 
-       android:layout_height="wrap_content"
-       android:paddingLeft="16dp"
-       android:paddingRight="16dp">
-    <TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:textSize="18sp" 
-    android:id="@+id/PlayerTurn"
-    android:text="@string/turn1">
-	</TextView>
-    
-    <com.example.tictactoe.TicTacToeBoard
-        android:id="@+id/gameBoard"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-    
-    <Button
-        android:id="@+id/confirmMove"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:text="@string/confirmMove"
-        android:onClick="endMove"
-        >
-    </Button>
-    
-    <Button
-        android:id="@+id/resetBoard"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:text="@string/resetBoard"
-        android:onClick="resetBoard"
-        >
-    </Button>
-    
-    <Button
-        android:id="@+id/Quit"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:text="@string/Quit"
-        android:onClick="toMainMenu"
-		>
-    </Button>
-   </LinearLayout>
+  	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+		android:orientation="vertical" 
+		android:layout_width="match_parent" 
+		android:layout_height="wrap_content"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp">
+		<TextView
+		   	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:gravity="center"
+	    	android:textSize="18sp" 
+	    	android:id="@+id/PlayerTurn"
+	    	android:text="@string/turn1">
+		</TextView>
+	    
+	    <com.example.tictactoe.TicTacToeBoard
+	        android:id="@+id/gameBoard"
+	        android:layout_width="fill_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="1"
+	    />
+	    
+	    <Button
+	        android:id="@+id/confirmMove"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:text="@string/confirmMove"
+	        android:onClick="endMove"
+	    />
+	    
+	    <Button
+	        android:id="@+id/resetBoard"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:text="@string/resetBoard"
+	        android:onClick="resetBoard"
+	    />
+	    
+	    <Button
+	        android:id="@+id/Quit"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:text="@string/Quit"
+	        android:onClick="toMainMenu"
+		/>
+	</LinearLayout>

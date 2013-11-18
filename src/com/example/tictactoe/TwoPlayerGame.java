@@ -1,10 +1,10 @@
 package com.example.tictactoe;
 
-//import com.example.tictactoe.R.string;
-
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -89,9 +89,7 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 	
 	public void endMove(View view)
 	{
-		if (boardView.confirmMove())
-		{
-		}
+		boardView.confirmMove();
 	}
 	
 	public void onViewTouched(int row, int col, int player) {
@@ -115,6 +113,7 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 			t.setText(R.string.turn2);
 	}
 	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void toMainMenu(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -144,6 +143,7 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 			confirmButton.setEnabled(false);
 	}
 	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void resetBoard(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -171,13 +171,19 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 	
 	public void onConfirmToQuit()
 	{
-		Intent intent = new Intent(this, MainScreen.class);
-		startActivity(intent);
+		//Intent intent = new Intent(this, MainScreen.class);
+		//startActivity(intent);
+		finish();
 	}
 	
 	public void onConfirmToRestart()
 	{
 		finish();
 		startActivity(getIntent());
+	}
+	
+	public void onBackPressed()
+	{
+		toMainMenu(null);
 	}
 }

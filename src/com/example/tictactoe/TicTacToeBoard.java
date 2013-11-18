@@ -327,7 +327,7 @@ public class TicTacToeBoard extends View
 			{
 				if(moveIsValid(i, j))
 				{
-					possSpots[index] = i*10+j;
+					possSpots[index] = i*9+j;
 					index++;
 				}
 			}
@@ -336,11 +336,10 @@ public class TicTacToeBoard extends View
 		int choice = rand.nextInt(index+1);
 		
 		int move = possSpots[choice];
-		cursorXPos = move%10;
-		cursorYPos = move/10;
+		cursorXPos = move%9;
+		cursorYPos = move/9;
 		
 		confirmMove();
-		
 	}
 	
 }

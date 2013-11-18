@@ -1,28 +1,19 @@
 package com.example.tictactoe;
 
-import android.os.Bundle;
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
-import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.app.DialogFragment;
+import android.os.Build;
 import android.os.Bundle;
-
-//package com.example.tictactoe;
-
-//import com.example.tictactoe.R.string;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+//package com.example.tictactoe;
+//import com.example.tictactoe.R.string;
 
-public class OnePlayerGame extends Activity implements ViewWasTouchedListener
+public class OnePlayerGame extends Activity implements ViewWasTouchedListener, RestartAndQuitDialogFragment.Listener
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
@@ -100,10 +91,14 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener
 	
 	public void endMove(View view)
 	{
-		if (boardView.confirmMove())
-		{
-		}
-		boardView.CPUmove(1);
+		boardView.confirmMove();
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			public void run() {
+				boardView.CPUmove(1);
+			}
+		}, 1000);
+		//boardView.CPUmove(1);
 	}
 	
 	public void onViewTouched(int row, int col, int player) {
@@ -122,15 +117,19 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener
 		TextView t = (TextView) findViewById(R.id.PlayerTurn);
 		player1Turn = !player1Turn;
 		if (player1Turn)
-			t.setText(R.string.turn1);
+			t.setText(R.string.turnSolo);
 		else
-			t.setText(R.string.turn2);
+			t.setText(R.string.turnCPU);
 	}
 	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void toMainMenu(View view)
 	{
-		Intent intent = new Intent(this, MainScreen.class);
-		startActivity(intent);
+		DialogFragment dialog = new RestartAndQuitDialogFragment();
+		Bundle bundle = new Bundle(1);
+		bundle.putBoolean("isQuit", true);
+		dialog.setArguments(bundle);
+		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
 	
 	public void onFinishMove()
@@ -138,9 +137,9 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener
 		TextView t = (TextView) findViewById(R.id.PlayerTurn);
 		player1Turn = !player1Turn;
 		if (player1Turn)
-			t.setText(R.string.turn1);
+			t.setText(R.string.turnSolo);
 		else
-			t.setText(R.string.turn2);
+			t.setText(R.string.turnCPU);
 	}
 	
 	
@@ -153,10 +152,14 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener
 			confirmButton.setEnabled(false);
 	}
 	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void resetBoard(View view)
 	{
-		finish();
-		startActivity(getIntent());
+		DialogFragment dialog = new RestartAndQuitDialogFragment();
+		Bundle bundle = new Bundle(1);
+		bundle.putBoolean("isQuit", false);
+		dialog.setArguments(bundle);
+		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
 	
 /*	public void updateTurnTextView(string s)
@@ -168,12 +171,29 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener
 	public void onWin()
 	{
 		TextView t = (TextView) findViewById(R.id.PlayerTurn);
+		// Text is reversed because winner is the person who moved before the "current" player
 		if (player1Turn)
-			t.setText(R.string.winner1);
+			t.setText(R.string.winnerCPU);
 		else
-			t.setText(R.string.winner2);
+			t.setText(R.string.winnerSolo);
 	}
 	
+	public void onConfirmToQuit()
+	{
+		//Intent intent = new Intent(this, MainScreen.class);
+		//startActivity(intent);
+		finish();
+	}
 	
+	public void onConfirmToRestart()
+	{
+		finish();
+		startActivity(getIntent());
+	}
+	
+	public void onBackPressed()
+	{
+		toMainMenu(null);
+	}
 }
 
