@@ -10,8 +10,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-//package com.example.tictactoe;
-//import com.example.tictactoe.R.string;
 
 public class OnePlayerGame extends Activity implements ViewWasTouchedListener, RestartAndQuitDialogFragment.Listener
 {

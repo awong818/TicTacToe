@@ -417,93 +417,95 @@ public class TicTacToeBoard extends View
 				}
 			}
 			
-			int noFutureWinIndex = 0;
-			int [] noFutureWin = new int[index];
-			
-			/***DOES NOT WORK CONSISTENTLY***/
-			if(newIndex == 0 && blockWinIndex == 0) // if no possible spots for winning a square or blocking a win
+			// Hard only processing
+			if (difficulty >= 2)
 			{
-				for (int i = 0; i < index; i++) 
-				{
-					int testRow = possSpots[i] / 9;
-					int testCol = possSpots[i] % 9;
-					getBoundsForNextMove(testRow, testCol, true);
-				//	boardData[testCol][testRow] = 1;
-					
-					boolean badMove = false;
-					for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
-						//opponent can win square on next move
-					{
-						for(int c = tmpCLow; c <= tmpCHigh; c++)
-						{
-							if(boardData[c][r] == 0)
-								boardData[c][r] = 1;
-							else
-								continue;
-							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
-							{
-								badMove = true;
-							}
-							boardData[c][r] = 0;
-						}
-						if(badMove)
-							break;
-					}
-					
-					if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
-					{
-						noFutureWin[noFutureWinIndex] = possSpots[i];
-						noFutureWinIndex++;
-					}
-				//	boardData[testCol][testRow] = 0;
-				}
-				if(noFutureWinIndex > 0)
-				{
-					index = noFutureWinIndex;
-					possSpots = noFutureWin;
-				}
+				int noFutureWinIndex = 0;
+				int [] noFutureWin = new int[index];
 				
-				/***DOES NOT WORK CONSISTENTLY***/
-				int noFutureBlockIndex = 0;
-				int [] noFutureBlock = new int[index];
-				for (int i = 0; i < index; i++) 
+				if(newIndex == 0 && blockWinIndex == 0) // if no possible spots for winning a square or blocking a win
 				{
-					int testRow = possSpots[i] / 9;
-					int testCol = possSpots[i] % 9;
-					getBoundsForNextMove(testRow, testCol, true);
-				//	boardData[testCol][testRow] = 1;
-					
-					boolean badMove = false;
-					for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
-						//opponent can win square on next move
+					for (int i = 0; i < index; i++) 
 					{
-						for(int c = tmpCLow; c <= tmpCHigh; c++)
+						int testRow = possSpots[i] / 9;
+						int testCol = possSpots[i] % 9;
+						getBoundsForNextMove(testRow, testCol, true);
+					//	boardData[testCol][testRow] = 1;
+						
+						boolean badMove = false;
+						for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
+							//opponent can win square on next move
 						{
-							if(boardData[c][r] == 0)
-								boardData[c][r] = 1;
-							else
-								continue;
-							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
+							for(int c = tmpCLow; c <= tmpCHigh; c++)
 							{
-								badMove = true;
+								if(boardData[c][r] == 0)
+									boardData[c][r] = 1;
+								else
+									continue;
+								if (isCompleted(r / 3, c / 3, boardData, false) == 1)
+								{
+									badMove = true;
+								}
+								boardData[c][r] = 0;
 							}
-							boardData[c][r] = 0;
+							if(badMove)
+								break;
 						}
-						if(badMove)
-							break;
+						
+						if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+						{
+							noFutureWin[noFutureWinIndex] = possSpots[i];
+							noFutureWinIndex++;
+						}
+					//	boardData[testCol][testRow] = 0;
+					}
+					if(noFutureWinIndex > 0)
+					{
+						index = noFutureWinIndex;
+						possSpots = noFutureWin;
 					}
 					
-					if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+					int noFutureBlockIndex = 0;
+					int [] noFutureBlock = new int[index];
+					for (int i = 0; i < index; i++) 
 					{
-						noFutureBlock[noFutureBlockIndex] = possSpots[i];
-						noFutureBlockIndex++;
+						int testRow = possSpots[i] / 9;
+						int testCol = possSpots[i] % 9;
+						getBoundsForNextMove(testRow, testCol, true);
+					//	boardData[testCol][testRow] = 1;
+						
+						boolean badMove = false;
+						for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
+							//opponent can win square on next move
+						{
+							for(int c = tmpCLow; c <= tmpCHigh; c++)
+							{
+								if(boardData[c][r] == 0)
+									boardData[c][r] = 1;
+								else
+									continue;
+								if (isCompleted(r / 3, c / 3, boardData, false) == 1)
+								{
+									badMove = true;
+								}
+								boardData[c][r] = 0;
+							}
+							if(badMove)
+								break;
+						}
+						
+						if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+						{
+							noFutureBlock[noFutureBlockIndex] = possSpots[i];
+							noFutureBlockIndex++;
+						}
 					}
-				}
-				
-				if(noFutureBlockIndex > 0)
-				{
-					index = noFutureBlockIndex;
-					possSpots = noFutureBlock;
+					
+					if(noFutureBlockIndex > 0)
+					{
+						index = noFutureBlockIndex;
+						possSpots = noFutureBlock;
+					}
 				}
 				
 				int[] partialMatch = new int[index];
@@ -602,23 +604,25 @@ public class TicTacToeBoard extends View
 			
 			boardData[row1][col1] = 0;
 			boardData[row2][col2] = 0;
+			
+			// Recalculate large board data
+			for (int r = 0; r < 3; r++)
+				for (int c = 0; c < 3; c++)
+					largeBoardData[c][r] = isCompleted(r, c, boardData, false);
+			
+			invalidate();
 		}
 		if (moveHistory.size() > 0)
 		{
 			int move = moveHistory.get(moveHistory.size()-1);
 			int row = move/9;
 			int col = move%9;
-			getBoundsForNextMove(row, col, false);
+			getBoundsForNextMove(col, row, false);
 		}
 		else
 		{
 			rLow = 0; rHigh = 9; cLow = 0; cHigh = 9;
 		}
-		// Recalculate large board data
-		for (int r = 0; r < 3; r++)
-			for (int c = 0; c < 3; c++)
-				largeBoardData[c][r] = isCompleted(r, c, boardData, false);
-		invalidate();
 	}
 	
 	public boolean hasMoveHistory()
