@@ -207,5 +207,11 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	{
 		toMainMenu(null);
 	}
+	
+	public void undoMove(View view)
+	{
+		boardView.undoMove();
+	}
+	
 }
 

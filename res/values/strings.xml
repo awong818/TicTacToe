@@ -33,6 +33,7 @@
 	<string name="easy">Easy mode</string>
 	<string name="medium">Medium mode</string>
 	<string name="hard">Hard mode</string>
+	<string name="undoMove">Undo Move</string>
 	
 	<string-array name="difficulties">
 	    <item>Easy</item>

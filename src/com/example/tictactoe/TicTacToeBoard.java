@@ -33,7 +33,9 @@ public class TicTacToeBoard extends View
 	
 	private int playerturn = 1;
 	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
-
+	private int tmpRLow = 0, tmpRHigh = 9, tmpCLow = 0, tmpCHigh = 9; // for CPU move
+	
+	ArrayList <Integer> moveHistory = new ArrayList <Integer>();
 	ArrayList<ViewWasTouchedListener> listeners = new ArrayList<ViewWasTouchedListener>();
 	
 	public void setWasTouchedListener(ViewWasTouchedListener listener)
@@ -202,18 +204,35 @@ public class TicTacToeBoard extends View
 		return true;
 	}
 	
-	private void getBoundsForNextMove(int row, int col)
+	private void getBoundsForNextMove(int row, int col, boolean isTemp)
 	{
-		rLow = row % 3 * 3;
-		rHigh = row % 3 * 3 + 2;
-		cLow = col % 3 * 3;
-		cHigh = col % 3 * 3 + 2;
-		if (largeBoardData[cLow / 3][rLow / 3] != 0)
+		if(!isTemp)
+		{
+			rLow = row % 3 * 3;
+			rHigh = row % 3 * 3 + 2;
+			cLow = col % 3 * 3;
+			cHigh = col % 3 * 3 + 2;
+		}
+		else
+		{
+			tmpRLow = row % 3 * 3;
+			tmpRHigh = row % 3 * 3 + 2;
+			tmpCLow = col % 3 * 3;
+			tmpCHigh = col % 3 * 3 + 2;
+		}
+		if (largeBoardData[cLow / 3][rLow / 3] != 0 && !isTemp)
 		{
 			rLow = 0;
 			rHigh = 9;
 			cLow = 0;
 			cHigh = 9;
+		}
+		else if(largeBoardData[tmpCLow/3][tmpRLow/3] != 0 && isTemp)
+		{
+			tmpRLow = 0;
+			tmpRHigh = 8;
+			tmpCLow = 0;
+			tmpCHigh = 8;
 		}
 	}
 	
@@ -241,14 +260,14 @@ public class TicTacToeBoard extends View
 			return false;
 		
 		boardData[cursorXPos][cursorYPos] = playerturn;
-		
+		moveHistory.add((cursorXPos*9+cursorYPos));
 		for (ViewWasTouchedListener listener:listeners)
 			listener.onFinishMove();
 		playerturn *= -1;
-		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3, boardData);
+		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3, boardData, false);
 		
 			
-		getBoundsForNextMove(cursorYPos, cursorXPos);
+		getBoundsForNextMove(cursorYPos, cursorXPos, false);
 		cursorXPos = -1;
 		cursorYPos = -1;
 		if(isWin()!=0) // if a player won
@@ -264,7 +283,7 @@ public class TicTacToeBoard extends View
 	}
 	
 	// Returns 0 if not completed. Returns 1 if player one completed. Returns -1 if player 2 completed.
-	public int isCompleted(int row, int col, int[][] board)
+	public int isCompleted(int row, int col, int[][] board, boolean partialMatch)
 	{
 		// Check rows
 		for (int i = 0; i < 3; i++)
@@ -272,6 +291,10 @@ public class TicTacToeBoard extends View
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
 				sum += board[col * 3 + j][row * 3 + i];
+			if(partialMatch && sum == -2)
+			{
+				return -2;
+			}
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -284,6 +307,10 @@ public class TicTacToeBoard extends View
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
 				sum += board[col * 3 + i][row * 3 + j];
+			if(partialMatch && sum == -2)
+			{
+				return -2;
+			}
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -294,6 +321,10 @@ public class TicTacToeBoard extends View
 		int sum = 0;
 		for (int i = 0; i < 3; i++)
 			sum += board[col * 3 + i][row * 3 + i];
+		if(partialMatch && sum == -2)
+		{
+			return -2;
+		}
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -302,6 +333,10 @@ public class TicTacToeBoard extends View
 		sum = 0;
 		for (int i = 0; i < 3; i++)
 			sum += board[col * 3 + i][row * 3 + 2 - i];
+		if(partialMatch && sum == -2)
+		{
+			return -2;
+		}
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -313,7 +348,7 @@ public class TicTacToeBoard extends View
 	
 	public int isWin()
 	{
-		return isCompleted(0,0, largeBoardData);
+		return isCompleted(0,0, largeBoardData, false);
 	}
 	
 	public void CPUmove(int difficulty)
@@ -339,12 +374,15 @@ public class TicTacToeBoard extends View
 		{
 			int newIndex = 0;
 			int[] newPossSpots = new int[index];
+			
+			int blockWinIndex = 0;
+			int[] blockWin = new int[index];
 			for (int i = 0; i < index; i++)
 			{
 				int testRow = possSpots[i] / 9;
 				int testCol = possSpots[i] % 9;
 				boardData[testCol][testRow] = -1;
-				if (isCompleted(testRow / 3, testCol / 3, boardData) == -1)
+				if (isCompleted(testRow / 3, testCol / 3, boardData, false) == -1)
 				{
 					newPossSpots[newIndex] = possSpots[i];
 					newIndex++;
@@ -357,6 +395,188 @@ public class TicTacToeBoard extends View
 				possSpots = newPossSpots;
 				index = newIndex;
 			}
+			else
+			{
+				
+				// if there are no possible moves to make AI win square, look for moves that will prevent opponents win
+				/***DOES NOT WORK CONSISTENTLY***/
+				for (int i = 0; i < index; i++) 
+				{
+					int testRow = possSpots[i] / 9;
+					int testCol = possSpots[i] % 9;
+					boardData[testCol][testRow] = 1;
+					if (isCompleted(testRow / 3, testCol / 3, boardData, false) == 1)
+					{
+						blockWin[blockWinIndex] = possSpots[i];
+						blockWinIndex++;
+					}
+					boardData[testCol][testRow] = 0;
+				}
+				
+				if(blockWinIndex > 0)
+				{
+					possSpots = blockWin;
+					index = blockWinIndex;
+				}
+			}
+			
+			int noFutureWinIndex = 0;
+			int [] noFutureWin = new int[index];
+			
+			
+			if(newIndex == 0 && blockWinIndex == 0) // if no possible spots for winning a square or blocking a win
+			{
+				for (int i = 0; i < index; i++) 
+				{
+					int testRow = possSpots[i] / 9;
+					int testCol = possSpots[i] % 9;
+					getBoundsForNextMove(testRow, testCol, true);
+				//	boardData[testCol][testRow] = 1;
+					
+					boolean badMove = false;
+					for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
+						//opponent can win square on next move
+					{
+						for(int c = tmpCLow; c <= tmpCHigh; c++)
+						{
+							if(boardData[r][c] == 0)
+								boardData[r][c] = 1;
+							else
+								continue;
+							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
+							{
+								badMove = true;
+							}
+							boardData[r][c] = 0;
+						}
+						if(badMove)
+							break;
+					}
+					
+					if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+					{
+						noFutureWin[noFutureWinIndex] = possSpots[i];
+						noFutureWinIndex++;
+					}
+				//	boardData[testCol][testRow] = 0;
+				}
+				if(noFutureWinIndex > 0)
+				{
+					index = noFutureWinIndex;
+					possSpots = noFutureWin;
+				}
+				
+				int noFutureBlockIndex = 0;
+				int [] noFutureBlock = new int[index];
+				for (int i = 0; i < index; i++) 
+				{
+					int testRow = possSpots[i] / 9;
+					int testCol = possSpots[i] % 9;
+					getBoundsForNextMove(testRow, testCol, true);
+				//	boardData[testCol][testRow] = 1;
+					
+					boolean badMove = false;
+					for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
+						//opponent can win square on next move
+					{
+						for(int c = tmpCLow; c <= tmpCHigh; c++)
+						{
+							if(boardData[r][c] == 0)
+								boardData[r][c] = 1;
+							else
+								continue;
+							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
+							{
+								badMove = true;
+							}
+							boardData[r][c] = 0;
+						}
+						if(badMove)
+							break;
+					}
+					
+					if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+					{
+						noFutureBlock[noFutureBlockIndex] = possSpots[i];
+						noFutureBlockIndex++;
+					}
+				}
+				
+				if(noFutureBlockIndex > 0)
+				{
+					index = noFutureBlockIndex;
+					possSpots = noFutureBlock;
+				}
+				
+				int[] partialMatch = new int[index];
+				int partialMatchIndex = 0;
+				
+				for(int i = 0; i < index; i++) // attempts to make moves that will result in two in a row O's
+				{
+					int testRow = possSpots[i] / 9;
+					int testCol = possSpots[i] % 9;
+					boardData[testCol][testRow] = 1;
+					if (isCompleted(testRow / 3, testCol / 3, boardData, true) == -2)
+					{
+						partialMatch[partialMatchIndex] = possSpots[i];
+						partialMatchIndex++;
+					}
+					boardData[testCol][testRow] = 0;
+				}
+				
+				if(partialMatchIndex > 0)
+				{
+					index = partialMatchIndex;
+					possSpots = partialMatch;
+				}
+				
+				int[] centerMove = new int[index];
+				int centerMoveIndex = 0;
+				for(int i = 0; i < index; i++)// prioritize center square over any other square
+				{
+					int testRow = possSpots[i] / 9;
+					int testCol = possSpots[i] % 9;
+					
+					if(testRow%3 == 1 && testCol%3 == 1)
+					{
+						centerMove[centerMoveIndex] = possSpots[i];
+						centerMoveIndex++;
+					}
+				}
+				
+				if(centerMoveIndex > 0)
+				{
+					index = centerMoveIndex;
+					possSpots = centerMove;
+				}
+				else
+				{
+					int[] cornerMove = new int[index];
+					int cornerMoveIndex = 0;
+					for(int i = 0; i < index; i++)// prioritize corner squares over any other square
+					{
+						int testRow = possSpots[i] / 9;
+						int testCol = possSpots[i] % 9;
+						
+						if((testRow%3 == 0 || testRow%3 == 2) && (testCol%3 == 0 || testCol%3 == 2))
+						{
+							cornerMove[cornerMoveIndex] = possSpots[i];
+							cornerMoveIndex++;
+						}
+					}
+					
+					if(cornerMoveIndex > 0)
+					{
+						index = cornerMoveIndex;
+						possSpots = cornerMove;
+					}
+				}
+			}
+			
+			
+			
+			
+			
 		}
 		
 		int choice = rand.nextInt(index);
@@ -366,6 +586,37 @@ public class TicTacToeBoard extends View
 		cursorYPos = move/9;
 		
 		confirmMove();
+	}
+	
+	public void undoMove()
+	{
+		if(moveHistory.size() > 1)
+		{
+			int move1 = moveHistory.get(moveHistory.size()-1);
+			int row1 = move1/9;
+			int col1 = move1%9;
+			moveHistory.remove(moveHistory.size()-1);
+			
+			int move2 = moveHistory.get(moveHistory.size()-1);
+			int row2 = move2/9;
+			int col2 = move2%9;
+			moveHistory.remove(moveHistory.size()-1);
+			
+			boardData[row1][col1] = 0;
+			boardData[row2][col2] = 0;
+		}
+		if(moveHistory.size() > 0)
+		{
+			int move = moveHistory.get(moveHistory.size()-1);
+			int row = move/9;
+			int col = move%9;
+			getBoundsForNextMove(row, col, false);
+		}
+		else
+		{
+			rLow = 0; rHigh = 9; cLow = 0; cHigh = 9;
+		}
+		invalidate();
 	}
 	
 }
