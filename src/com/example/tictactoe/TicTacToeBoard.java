@@ -399,7 +399,6 @@ public class TicTacToeBoard extends View
 			{
 				
 				// if there are no possible moves to make AI win square, look for moves that will prevent opponents win
-				/***DOES NOT WORK CONSISTENTLY***/
 				for (int i = 0; i < index; i++) 
 				{
 					int testRow = possSpots[i] / 9;
@@ -423,7 +422,7 @@ public class TicTacToeBoard extends View
 			int noFutureWinIndex = 0;
 			int [] noFutureWin = new int[index];
 			
-			
+			/***DOES NOT WORK CONSISTENTLY***/
 			if(newIndex == 0 && blockWinIndex == 0) // if no possible spots for winning a square or blocking a win
 			{
 				for (int i = 0; i < index; i++) 
@@ -466,6 +465,7 @@ public class TicTacToeBoard extends View
 					possSpots = noFutureWin;
 				}
 				
+				/***DOES NOT WORK CONSISTENTLY***/
 				int noFutureBlockIndex = 0;
 				int [] noFutureBlock = new int[index];
 				for (int i = 0; i < index; i++) 
