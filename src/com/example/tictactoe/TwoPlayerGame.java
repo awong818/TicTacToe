@@ -27,6 +27,7 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
 		boardView.setWasTouchedListener(this);
 		confirmButton = (Button)findViewById(R.id.confirmMove);
+		confirmButton.setEnabled(false);
 		//playGame();
 	}
 	

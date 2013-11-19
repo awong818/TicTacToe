@@ -265,8 +265,7 @@ public class TicTacToeBoard extends View
 			listener.onFinishMove();
 		playerturn *= -1;
 		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3, boardData, false);
-		
-			
+
 		getBoundsForNextMove(cursorYPos, cursorXPos, false);
 		cursorXPos = -1;
 		cursorYPos = -1;
@@ -397,7 +396,6 @@ public class TicTacToeBoard extends View
 			}
 			else
 			{
-				
 				// if there are no possible moves to make AI win square, look for moves that will prevent opponents win
 				for (int i = 0; i < index; i++) 
 				{
@@ -438,15 +436,15 @@ public class TicTacToeBoard extends View
 					{
 						for(int c = tmpCLow; c <= tmpCHigh; c++)
 						{
-							if(boardData[r][c] == 0)
-								boardData[r][c] = 1;
+							if(boardData[c][r] == 0)
+								boardData[c][r] = 1;
 							else
 								continue;
 							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
 							{
 								badMove = true;
 							}
-							boardData[r][c] = 0;
+							boardData[c][r] = 0;
 						}
 						if(badMove)
 							break;
@@ -481,15 +479,15 @@ public class TicTacToeBoard extends View
 					{
 						for(int c = tmpCLow; c <= tmpCHigh; c++)
 						{
-							if(boardData[r][c] == 0)
-								boardData[r][c] = 1;
+							if(boardData[c][r] == 0)
+								boardData[c][r] = 1;
 							else
 								continue;
 							if (isCompleted(r / 3, c / 3, boardData, false) == 1)
 							{
 								badMove = true;
 							}
-							boardData[r][c] = 0;
+							boardData[c][r] = 0;
 						}
 						if(badMove)
 							break;
@@ -590,7 +588,7 @@ public class TicTacToeBoard extends View
 	
 	public void undoMove()
 	{
-		if(moveHistory.size() > 1)
+		if (moveHistory.size() > 1)
 		{
 			int move1 = moveHistory.get(moveHistory.size()-1);
 			int row1 = move1/9;
@@ -605,7 +603,7 @@ public class TicTacToeBoard extends View
 			boardData[row1][col1] = 0;
 			boardData[row2][col2] = 0;
 		}
-		if(moveHistory.size() > 0)
+		if (moveHistory.size() > 0)
 		{
 			int move = moveHistory.get(moveHistory.size()-1);
 			int row = move/9;
@@ -616,7 +614,15 @@ public class TicTacToeBoard extends View
 		{
 			rLow = 0; rHigh = 9; cLow = 0; cHigh = 9;
 		}
+		// Recalculate large board data
+		for (int r = 0; r < 3; r++)
+			for (int c = 0; c < 3; c++)
+				largeBoardData[c][r] = isCompleted(r, c, boardData, false);
 		invalidate();
 	}
 	
+	public boolean hasMoveHistory()
+	{
+		return moveHistory.size() > 0;
+	}
 }

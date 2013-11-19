@@ -45,12 +45,12 @@ containing a value of this type.
         public static final int Quit=0x7f0a0009;
         public static final int TwoPlayer=0x7f0a0000;
         public static final int action_settings=0x7f0a000a;
-        public static final int confirmMove=0x7f0a0007;
+        public static final int confirmMove=0x7f0a0006;
         public static final int difficultyText=0x7f0a0003;
         public static final int gameBoard=0x7f0a0005;
         public static final int resetBoard=0x7f0a0008;
         public static final int textView1=0x7f0a0002;
-        public static final int undoMove=0x7f0a0006;
+        public static final int undoMove=0x7f0a0007;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

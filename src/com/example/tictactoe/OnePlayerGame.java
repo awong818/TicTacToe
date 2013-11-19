@@ -17,6 +17,7 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
+	private Button undoButton;
 	private int difficulty;
 	
 	boolean playerMove = false;
@@ -30,6 +31,9 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
 		boardView.setWasTouchedListener(this);
 		confirmButton = (Button)findViewById(R.id.confirmMove);
+		confirmButton.setEnabled(false);
+		undoButton = (Button)findViewById(R.id.undoMove);
+		undoButton.setEnabled(false);
 		difficulty = getIntent().getIntExtra("difficulty", 0);
 		switch (difficulty)
 		{
@@ -104,10 +108,12 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	public void endMove(View view)
 	{
 		boardView.confirmMove();
+		undoButton.setEnabled(false);
 		Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			public void run() {
 				boardView.CPUmove(difficulty);
+				undoButton.setEnabled(true);
 			}
 		}, 1000);
 		//boardView.CPUmove(1);
@@ -211,6 +217,8 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	public void undoMove(View view)
 	{
 		boardView.undoMove();
+		if (!boardView.hasMoveHistory())
+			undoButton.setEnabled(false);
 	}
 	
 }
