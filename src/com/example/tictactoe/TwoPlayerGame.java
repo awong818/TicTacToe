@@ -1,17 +1,14 @@
 package com.example.tictactoe;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, RestartAndQuitDialogFragment.Listener
+public class TwoPlayerGame extends Activity implements ViewWasChangedListener, RestartAndQuitDialogFragment.Listener
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
@@ -25,10 +22,10 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 		setContentView(R.layout.two_player_game);
 		
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
-		boardView.setWasTouchedListener(this);
+		boardView.setWasChangedListener(this);
+		
 		confirmButton = (Button)findViewById(R.id.confirmMove);
 		confirmButton.setEnabled(false);
-		//playGame();
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -37,84 +34,11 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 		return true;
 	}
 	
-	public void registerMove(View view)
-	{
-		int buttonId = view.getId();
-		
-	}
-	
-	public void playerMoved(View view)
-	{
-		playerMove = true;
-		
-		registerMove(view);
-	}
-	
-	public void playGame()
-	{
-		boolean playerTurn1 = true;
-		boolean playerTurn2 = false;
-		
-		while(!gameEnd()) // while game has not ended
-		{
-			if(playerTurn1)
-			{
-				while(playerMove)
-				{
-					
-				}	
-				// get where player 1 moved
-				// update board with player 1 move
-				// check if 3x3 grid with player 1 move has made him win this grid
-				// 
-				playerTurn1 = false;
-				playerTurn2 = true;
-				continue;
-			}
-			if(playerTurn2)
-			{
-				
-				
-				playerTurn2 = false;
-				playerTurn1 = true;
-				continue;
-			}
-		}
-	
-	}
-	
-	public boolean gameEnd()
-	{ // detect whether someone has won the game
-		return true;
-	}
-	
 	public void endMove(View view)
 	{
 		boardView.confirmMove();
 	}
 	
-	public void onViewTouched(int row, int col, int player) {
-		// TODO Auto-generated method stub
-		/*if(player == 1)
-		{
-			gameBoard[row][col] = 1;
-		}
-		if(player == -1)
-		{
-			gameBoard[row][col] = -1;
-		}*/
-		
-		//checkForMatches(row, col, player);
-		
-		TextView t = (TextView) findViewById(R.id.PlayerTurn);
-		player1Turn = !player1Turn;
-		if (player1Turn)
-			t.setText(R.string.turn1);
-		else
-			t.setText(R.string.turn2);
-	}
-	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void toMainMenu(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -134,17 +58,11 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 			t.setText(R.string.turn2);
 	}
 	
-	
 	public void onViewChanged(boolean isValidMove)
 	{
-		//Log.d("TicTacToe", "" + isValidMove);
-		if (isValidMove)
-			confirmButton.setEnabled(true);
-		else
-			confirmButton.setEnabled(false);
+		confirmButton.setEnabled(isValidMove);
 	}
 	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void resetBoard(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -153,12 +71,6 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 		dialog.setArguments(bundle);
 		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
-	
-/*	public void updateTurnTextView(string s)
-	{
-		
-	}
-	*/
 	
 	public void onWin()
 	{
@@ -172,8 +84,6 @@ public class TwoPlayerGame extends Activity implements ViewWasTouchedListener, R
 	
 	public void onConfirmToQuit()
 	{
-		//Intent intent = new Intent(this, MainScreen.class);
-		//startActivity(intent);
 		finish();
 	}
 	

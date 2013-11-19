@@ -1,9 +1,7 @@
 package com.example.tictactoe;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -11,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class OnePlayerGame extends Activity implements ViewWasTouchedListener, RestartAndQuitDialogFragment.Listener
+public class OnePlayerGame extends Activity implements ViewWasChangedListener, RestartAndQuitDialogFragment.Listener
 {
 	private TicTacToeBoard boardView;
 	private Button confirmButton;
@@ -27,11 +25,14 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 		setContentView(R.layout.one_player_game);
 		
 		boardView = (TicTacToeBoard)findViewById(R.id.gameBoard);
-		boardView.setWasTouchedListener(this);
+		boardView.setWasChangedListener(this);
+		
 		confirmButton = (Button)findViewById(R.id.confirmMove);
 		confirmButton.setEnabled(false);
+		
 		undoButton = (Button)findViewById(R.id.undoMove);
 		undoButton.setEnabled(false);
+		
 		difficulty = getIntent().getIntExtra("difficulty", 0);
 		switch (difficulty)
 		{
@@ -44,62 +45,11 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 		case 2: // Hard
 			((TextView)findViewById(R.id.difficultyText)).setText(R.string.hard);
 		}
-		//playGame();
 	}
 	
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	public void registerMove(View view)
-	{
-		int buttonId = view.getId();
-	}
-	
-	public void playerMoved(View view)
-	{
-		playerMove = true;
-		
-		registerMove(view);
-	}
-	
-	public void playGame()
-	{
-		boolean playerTurn1 = true;
-		boolean playerTurn2 = false;
-		
-		while(!gameEnd()) // while game has not ended
-		{
-			if(playerTurn1)
-			{
-				while(playerMove)
-				{
-					
-				}	
-				// get where player 1 moved
-				// update board with player 1 move
-				// check if 3x3 grid with player 1 move has made him win this grid
-				// 
-				playerTurn1 = false;
-				playerTurn2 = true;
-				continue;
-			}
-			if(playerTurn2)
-			{
-				
-				
-				playerTurn2 = false;
-				playerTurn1 = true;
-				continue;
-			}
-		}
-	
-	}
-	
-	public boolean gameEnd()
-	{ // detect whether someone has won the game
 		return true;
 	}
 	
@@ -107,6 +57,8 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	{
 		boardView.confirmMove();
 		undoButton.setEnabled(false);
+		
+		// Delay CPU decision by one second
 		Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			public void run() {
@@ -114,31 +66,8 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 				undoButton.setEnabled(true);
 			}
 		}, 1000);
-		//boardView.CPUmove(1);
 	}
 	
-	public void onViewTouched(int row, int col, int player) {
-		// TODO Auto-generated method stub
-		/*if(player == 1)
-		{
-			gameBoard[row][col] = 1;
-		}
-		if(player == -1)
-		{
-			gameBoard[row][col] = -1;
-		}*/
-		
-		//checkForMatches(row, col, player);
-		
-		TextView t = (TextView) findViewById(R.id.PlayerTurn);
-		player1Turn = !player1Turn;
-		if (player1Turn)
-			t.setText(R.string.turnSolo);
-		else
-			t.setText(R.string.turnCPU);
-	}
-	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void toMainMenu(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -161,14 +90,12 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	
 	public void onViewChanged(boolean isValidMove)
 	{
-		//Log.d("TicTacToe", "" + isValidMove);
 		if (isValidMove)
 			confirmButton.setEnabled(true);
 		else
 			confirmButton.setEnabled(false);
 	}
 	
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void resetBoard(View view)
 	{
 		DialogFragment dialog = new RestartAndQuitDialogFragment();
@@ -177,12 +104,6 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 		dialog.setArguments(bundle);
 		dialog.show(getFragmentManager(), "restartAndQuit");
 	}
-	
-/*	public void updateTurnTextView(string s)
-	{
-		
-	}
-	*/
 	
 	public void onWin()
 	{
@@ -196,8 +117,6 @@ public class OnePlayerGame extends Activity implements ViewWasTouchedListener, R
 	
 	public void onConfirmToQuit()
 	{
-		//Intent intent = new Intent(this, MainScreen.class);
-		//startActivity(intent);
 		finish();
 	}
 	

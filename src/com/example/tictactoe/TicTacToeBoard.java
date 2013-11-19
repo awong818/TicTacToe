@@ -10,13 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-//import android.util.Log;
-import android.widget.TextView;
-
-
 
 public class TicTacToeBoard extends View
 {
@@ -35,24 +30,23 @@ public class TicTacToeBoard extends View
 	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
 	private int tmpRLow = 0, tmpRHigh = 9, tmpCLow = 0, tmpCHigh = 9; // for CPU move
 	
-	ArrayList <Integer> moveHistory = new ArrayList <Integer>();
-	ArrayList<ViewWasTouchedListener> listeners = new ArrayList<ViewWasTouchedListener>();
-	
-	public void setWasTouchedListener(ViewWasTouchedListener listener)
-	{
-	    listeners.add(listener);
-	}
+	private ArrayList <Integer> moveHistory = new ArrayList <Integer>();
+	private ArrayList<ViewWasChangedListener> listeners = new ArrayList<ViewWasChangedListener>();
 	
 	public TicTacToeBoard(Context context, AttributeSet attributes)
 	{
 		super(context, attributes);
 		mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		
 		mHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mHighlightPaint.setARGB(127, 255, 255, 0);
+		
 		mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mLinePaint.setARGB(255, 0, 0, 0);
+		
 		mGreyOutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mGreyOutPaint.setARGB(127, 0, 0, 0);
+		
 		boardData = new int[9][9];
 		largeBoardData = new int[3][3];
 		drawingRect = new Rect(0, 0, 0, 0);
@@ -60,6 +54,11 @@ public class TicTacToeBoard extends View
 		cursorYPos = -1;
 	}
 
+	public void setWasChangedListener(ViewWasChangedListener listener)
+	{
+	    listeners.add(listener);
+	}
+	
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
 		// Determine size of tile
@@ -92,7 +91,8 @@ public class TicTacToeBoard extends View
 	        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
 	        // height and width larger than the requested height and width.
 	        while ((halfHeight / inSampleSize) > reqHeight
-                && (halfWidth / inSampleSize) > reqWidth) {
+                && (halfWidth / inSampleSize) > reqWidth)
+	        {
 	        	inSampleSize *= 2;
         	}
 	    }
@@ -193,11 +193,13 @@ public class TicTacToeBoard extends View
 		if (curActionPointer == e.getPointerId(0))
 		{
 			translateToBoardPosition((int)e.getX(), (int)e.getY());
+			
 			// On release
 			if (e.getActionMasked() == MotionEvent.ACTION_UP)
 				curActionPointer = -1;
+			
 			invalidate();
-			for (ViewWasTouchedListener listener : listeners)
+			for (ViewWasChangedListener listener : listeners)
 				listener.onViewChanged(moveIsValid(cursorYPos, cursorXPos));
 		}
 		super.onTouchEvent(e);
@@ -206,36 +208,39 @@ public class TicTacToeBoard extends View
 	
 	private void getBoundsForNextMove(int row, int col, boolean isTemp)
 	{
-		if(!isTemp)
-		{
-			rLow = row % 3 * 3;
-			rHigh = row % 3 * 3 + 2;
-			cLow = col % 3 * 3;
-			cHigh = col % 3 * 3 + 2;
-		}
-		else
+		if (isTemp)
 		{
 			tmpRLow = row % 3 * 3;
 			tmpRHigh = row % 3 * 3 + 2;
 			tmpCLow = col % 3 * 3;
 			tmpCHigh = col % 3 * 3 + 2;
+			
+			// Set bounds to be unlimited if large tile is completed
+			if(largeBoardData[tmpCLow/3][tmpRLow/3] != 0)
+			{
+				tmpRLow = 0;
+				tmpRHigh = 8;
+				tmpCLow = 0;
+				tmpCHigh = 8;
+			}
 		}
-		if (largeBoardData[cLow / 3][rLow / 3] != 0 && !isTemp)
+		else
 		{
-			rLow = 0;
-			rHigh = 9;
-			cLow = 0;
-			cHigh = 9;
-		}
-		else if(largeBoardData[tmpCLow/3][tmpRLow/3] != 0 && isTemp)
-		{
-			tmpRLow = 0;
-			tmpRHigh = 8;
-			tmpCLow = 0;
-			tmpCHigh = 8;
+			rLow = row % 3 * 3;
+			rHigh = row % 3 * 3 + 2;
+			cLow = col % 3 * 3;
+			cHigh = col % 3 * 3 + 2;
+			
+			// Set bounds to be unlimited if large tile is completed
+			if (largeBoardData[cLow / 3][rLow / 3] != 0)
+			{
+				rLow = 0;
+				rHigh = 9;
+				cLow = 0;
+				cHigh = 9;
+			}
 		}
 	}
-	
 	
 	private boolean moveIsValid(int row, int col)
 	{
@@ -245,7 +250,6 @@ public class TicTacToeBoard extends View
 			return false;
 		return row >= rLow && row <= rHigh && col >= cLow && col <= cHigh && boardData[col][row] == 0;
 	}
-	
 	
 	private void translateToBoardPosition(int x, int y)
 	{
@@ -259,29 +263,39 @@ public class TicTacToeBoard extends View
 		if (!(cursorXPos >= 0 && cursorXPos < 9 && cursorYPos >= 0 && cursorYPos < 9 && moveIsValid(cursorYPos, cursorXPos)))
 			return false;
 		
+		// Change board data and move history
 		boardData[cursorXPos][cursorYPos] = playerturn;
-		moveHistory.add((cursorXPos*9+cursorYPos));
-		for (ViewWasTouchedListener listener:listeners)
-			listener.onFinishMove();
-		playerturn *= -1;
+		moveHistory.add(cursorXPos * 9 + cursorYPos);
 		largeBoardData[cursorXPos / 3][cursorYPos / 3] = isCompleted(cursorYPos / 3, cursorXPos / 3, boardData, false);
-
+		
+		// Notify listeners
+		for (ViewWasChangedListener listener:listeners)
+			listener.onFinishMove();
+		
+		// Change player turn and set new bounds
+		playerturn *= -1;
 		getBoundsForNextMove(cursorYPos, cursorXPos, false);
 		cursorXPos = -1;
 		cursorYPos = -1;
-		if(isWin()!=0) // if a player won
+		
+		if(isWin() != 0) // If a player won
 		{
+			// Disable board and notify listeners
 			cLow = -1; cHigh = -1; rLow = -1; rHigh = -1;
-			for (ViewWasTouchedListener listener:listeners)
+			for (ViewWasChangedListener listener:listeners)
 				listener.onWin();
 		}
+		
 		invalidate();
-		for (ViewWasTouchedListener listener : listeners)
+		for (ViewWasChangedListener listener : listeners)
 			listener.onViewChanged(false);
+		
 		return true;
 	}
 	
 	// Returns 0 if not completed. Returns 1 if player one completed. Returns -1 if player 2 completed.
+	// If partialMatch flag is set to true, returns 2 if player one has a two in a row, and returns
+	// -2 if player 2 has a two in a row.
 	public int isCompleted(int row, int col, int[][] board, boolean partialMatch)
 	{
 		// Check rows
@@ -290,10 +304,8 @@ public class TicTacToeBoard extends View
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
 				sum += board[col * 3 + j][row * 3 + i];
-			if(partialMatch && sum == -2)
-			{
+			if (partialMatch && sum == -2)
 				return -2;
-			}
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -306,10 +318,8 @@ public class TicTacToeBoard extends View
 			int sum = 0;
 			for (int j = 0; j < 3; j++)
 				sum += board[col * 3 + i][row * 3 + j];
-			if(partialMatch && sum == -2)
-			{
+			if (partialMatch && sum == -2)
 				return -2;
-			}
 			if (sum == 3)
 				return 1;
 			if (sum == -3)
@@ -320,10 +330,8 @@ public class TicTacToeBoard extends View
 		int sum = 0;
 		for (int i = 0; i < 3; i++)
 			sum += board[col * 3 + i][row * 3 + i];
-		if(partialMatch && sum == -2)
-		{
+		if (partialMatch && sum == -2)
 			return -2;
-		}
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -333,9 +341,7 @@ public class TicTacToeBoard extends View
 		for (int i = 0; i < 3; i++)
 			sum += board[col * 3 + i][row * 3 + 2 - i];
 		if(partialMatch && sum == -2)
-		{
 			return -2;
-		}
 		if (sum == 3)
 			return 1;
 		if (sum == -3)
@@ -347,11 +353,12 @@ public class TicTacToeBoard extends View
 	
 	public int isWin()
 	{
-		return isCompleted(0,0, largeBoardData, false);
+		return isCompleted(0, 0, largeBoardData, false);
 	}
 	
 	public void CPUmove(int difficulty)
 	{
+		// Generate all valid moves
 		Random rand =  new Random();
 		int[] possSpots = new int[81];
 		int index = 0;
@@ -368,9 +375,9 @@ public class TicTacToeBoard extends View
 		}
 		
 		// Medium and hard only processing
-		// Weeds out any moves that don't result in an immediate 3 in a row
 		if (difficulty >= 1)
 		{
+			// Weeds out any moves that don't result in an immediate 3 in a row
 			int newIndex = 0;
 			int[] newPossSpots = new int[index];
 			
@@ -388,6 +395,7 @@ public class TicTacToeBoard extends View
 				}
 				boardData[testCol][testRow] = 0;
 			}
+			
 			// If there were moves to weed out, replace old data with new data
 			if (newIndex > 0)
 			{
@@ -396,7 +404,7 @@ public class TicTacToeBoard extends View
 			}
 			else
 			{
-				// if there are no possible moves to make AI win square, look for moves that will prevent opponents win
+				// If there are no possible moves to make AI win square, look for moves that will prevent opponents win
 				for (int i = 0; i < index; i++) 
 				{
 					int testRow = possSpots[i] / 9;
@@ -410,7 +418,7 @@ public class TicTacToeBoard extends View
 					boardData[testCol][testRow] = 0;
 				}
 				
-				if(blockWinIndex > 0)
+				if (blockWinIndex > 0)
 				{
 					possSpots = blockWin;
 					index = blockWinIndex;
@@ -420,46 +428,42 @@ public class TicTacToeBoard extends View
 			// Hard only processing
 			if (difficulty >= 2)
 			{
+				// Look for ideal moves one move ahead
 				int noFutureWinIndex = 0;
 				int [] noFutureWin = new int[index];
 				
-				if(newIndex == 0 && blockWinIndex == 0) // if no possible spots for winning a square or blocking a win
+				if (newIndex == 0 && blockWinIndex == 0) // If no possible spots for winning a square or blocking a win
 				{
 					for (int i = 0; i < index; i++) 
 					{
 						int testRow = possSpots[i] / 9;
 						int testCol = possSpots[i] % 9;
 						getBoundsForNextMove(testRow, testCol, true);
-					//	boardData[testCol][testRow] = 1;
 						
 						boolean badMove = false;
-						for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
-							//opponent can win square on next move
-						{
-							for(int c = tmpCLow; c <= tmpCHigh; c++)
+						for (int r = tmpRLow; r <= tmpRHigh; r++) 	// Gets every possible move and sees if 	
+						{											// opponent can win square on next move
+							for (int c = tmpCLow; c <= tmpCHigh; c++)
 							{
 								if(boardData[c][r] == 0)
 									boardData[c][r] = 1;
 								else
 									continue;
 								if (isCompleted(r / 3, c / 3, boardData, false) == 1)
-								{
 									badMove = true;
-								}
 								boardData[c][r] = 0;
 							}
-							if(badMove)
+							if (badMove)
 								break;
 						}
 						
-						if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+						if (!badMove) // Adds moves that will not allow opponent to win 1 turn in future
 						{
 							noFutureWin[noFutureWinIndex] = possSpots[i];
 							noFutureWinIndex++;
 						}
-					//	boardData[testCol][testRow] = 0;
 					}
-					if(noFutureWinIndex > 0)
+					if (noFutureWinIndex > 0)
 					{
 						index = noFutureWinIndex;
 						possSpots = noFutureWin;
@@ -472,36 +476,32 @@ public class TicTacToeBoard extends View
 						int testRow = possSpots[i] / 9;
 						int testCol = possSpots[i] % 9;
 						getBoundsForNextMove(testRow, testCol, true);
-					//	boardData[testCol][testRow] = 1;
 						
 						boolean badMove = false;
-						for(int r = tmpRLow; r <= tmpRHigh; r++) // gets every possible move and sees if 
-							//opponent can win square on next move
-						{
-							for(int c = tmpCLow; c <= tmpCHigh; c++)
+						for (int r = tmpRLow; r <= tmpRHigh; r++) 	// Gets every possible move and sees if 		
+						{											// opponent can win square on next move
+							for (int c = tmpCLow; c <= tmpCHigh; c++)
 							{
-								if(boardData[c][r] == 0)
+								if (boardData[c][r] == 0)
 									boardData[c][r] = 1;
 								else
 									continue;
 								if (isCompleted(r / 3, c / 3, boardData, false) == 1)
-								{
 									badMove = true;
-								}
 								boardData[c][r] = 0;
 							}
-							if(badMove)
+							if (badMove)
 								break;
 						}
 						
-						if(!badMove) // adds moves that will not allow opponent to win 1 turn in future
+						if (!badMove) // Adds moves that will not allow opponent to win 1 turn in future
 						{
 							noFutureBlock[noFutureBlockIndex] = possSpots[i];
 							noFutureBlockIndex++;
 						}
 					}
 					
-					if(noFutureBlockIndex > 0)
+					if (noFutureBlockIndex > 0)
 					{
 						index = noFutureBlockIndex;
 						possSpots = noFutureBlock;
@@ -511,7 +511,7 @@ public class TicTacToeBoard extends View
 				int[] partialMatch = new int[index];
 				int partialMatchIndex = 0;
 				
-				for(int i = 0; i < index; i++) // attempts to make moves that will result in two in a row O's
+				for (int i = 0; i < index; i++) // Attempts to make moves that will result in two in a row O's
 				{
 					int testRow = possSpots[i] / 9;
 					int testCol = possSpots[i] % 9;
@@ -524,7 +524,7 @@ public class TicTacToeBoard extends View
 					boardData[testCol][testRow] = 0;
 				}
 				
-				if(partialMatchIndex > 0)
+				if (partialMatchIndex > 0)
 				{
 					index = partialMatchIndex;
 					possSpots = partialMatch;
@@ -532,19 +532,19 @@ public class TicTacToeBoard extends View
 				
 				int[] centerMove = new int[index];
 				int centerMoveIndex = 0;
-				for(int i = 0; i < index; i++)// prioritize center square over any other square
+				for (int i = 0; i < index; i++) // Prioritize center square over any other square
 				{
 					int testRow = possSpots[i] / 9;
 					int testCol = possSpots[i] % 9;
 					
-					if(testRow%3 == 1 && testCol%3 == 1)
+					if (testRow%3 == 1 && testCol%3 == 1)
 					{
 						centerMove[centerMoveIndex] = possSpots[i];
 						centerMoveIndex++;
 					}
 				}
 				
-				if(centerMoveIndex > 0)
+				if (centerMoveIndex > 0)
 				{
 					index = centerMoveIndex;
 					possSpots = centerMove;
@@ -553,32 +553,28 @@ public class TicTacToeBoard extends View
 				{
 					int[] cornerMove = new int[index];
 					int cornerMoveIndex = 0;
-					for(int i = 0; i < index; i++)// prioritize corner squares over any other square
+					for (int i = 0; i < index; i++) // Prioritize corner squares over any other square
 					{
 						int testRow = possSpots[i] / 9;
 						int testCol = possSpots[i] % 9;
 						
-						if((testRow%3 == 0 || testRow%3 == 2) && (testCol%3 == 0 || testCol%3 == 2))
+						if ((testRow%3 == 0 || testRow%3 == 2) && (testCol%3 == 0 || testCol%3 == 2))
 						{
 							cornerMove[cornerMoveIndex] = possSpots[i];
 							cornerMoveIndex++;
 						}
 					}
 					
-					if(cornerMoveIndex > 0)
+					if (cornerMoveIndex > 0)
 					{
 						index = cornerMoveIndex;
 						possSpots = cornerMove;
 					}
 				}
 			}
-			
-			
-			
-			
-			
 		}
 		
+		// Choose a move from the pool randomly
 		int choice = rand.nextInt(index);
 		
 		int move = possSpots[choice];
@@ -612,6 +608,7 @@ public class TicTacToeBoard extends View
 			
 			invalidate();
 		}
+		// Reset bounds
 		if (moveHistory.size() > 0)
 		{
 			int move = moveHistory.get(moveHistory.size()-1);

@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-public class TestGame extends Activity implements ViewWasTouchedListener {
-
-//	@Override
+public class TestGame extends Activity implements ViewWasChangedListener
+{
 	int[][] gameBoard = new int[9][9];
 	int[][] largeGameBoard = new int[3][3];
 	private int rLow = 0, rHigh = 9, cLow = 0, cHigh = 9; // lower and upper bounds for rows and columns
+	
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -32,7 +32,7 @@ public class TestGame extends Activity implements ViewWasTouchedListener {
 		}
 		setContentView(R.layout.test_game);
 		TicTacToeBoard t = (TicTacToeBoard) findViewById(R.id.gameBoard);
-		t.setWasTouchedListener(this);
+		t.setWasChangedListener(this);
 		//t.startGame();
 	}
 	
@@ -59,9 +59,8 @@ public class TestGame extends Activity implements ViewWasTouchedListener {
 		
 	
 	}
-	@Override
-	public void onViewTouched(int row, int col, int player) {
-		// TODO Auto-generated method stub
+
+	public void onViewChanged(int row, int col, int player) {
 		if(player == 1)
 		{
 			gameBoard[row][col] = 1;
